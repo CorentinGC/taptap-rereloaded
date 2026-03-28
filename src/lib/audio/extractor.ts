@@ -61,6 +61,25 @@ let _innertube: Innertube | undefined;
 
 async function getInnertube(): Promise<Innertube> {
   if (_innertube) return _innertube;
+
+  // Provide a JS evaluator for URL deciphering (required by youtubei.js)
+  const { Platform } = await import("youtubei.js");
+  const vm = await import("vm");
+  const shim = Platform.shim;
+  Platform.load({
+    ...shim,
+    eval: (script, env) => {
+      const context = { ...env };
+      vm.createContext(context);
+      vm.runInContext(script.output, context);
+      const result: Record<string, unknown> = {};
+      for (const key of script.exported) {
+        result[key] = context[key];
+      }
+      return result;
+    },
+  });
+
   const raw = getNetscapeCookieString();
   const cookie = raw ? netscapeToCookieHeader(raw) : undefined;
   _innertube = await Innertube.create({ cookie });
@@ -141,7 +160,7 @@ async function downloadWithYoutubei(
 
   onProgress?.(5);
 
-  const stream = await yt.download(videoId, { type: "audio", quality: "best", client: "IOS" });
+  const stream = await yt.download(videoId, { type: "audio", quality: "best", client: "WEB" });
 
   const chunks: Uint8Array[] = [];
   const reader = stream.getReader();
@@ -262,7 +281,7 @@ export async function getVideoInfo(url: string) {
   // Fallback: youtubei.js
   const yt = await getInnertube();
   const videoId = extractVideoIdFromUrl(url);
-  const info = await yt.getBasicInfo(videoId, { client: "IOS" });
+  const info = await yt.getBasicInfo(videoId, { client: "WEB" });
   const details = info.basic_info;
   return {
     title: details.title ?? "Unknown",
