@@ -120,6 +120,7 @@ export async function POST(request: Request) {
               const blob = await put(`audio/${info.videoId}.${ext}`, audioBuffer, {
                 access: "public",
                 contentType: audioContentType,
+                addRandomSuffix: false,
               });
               audioUrl = blob.url;
             } catch (uploadError) {
