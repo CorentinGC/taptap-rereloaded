@@ -5,10 +5,19 @@ import { unlink, writeFile } from "fs/promises";
 import { spawn } from "child_process";
 import { execFile } from "child_process";
 import { promisify } from "util";
-import ffmpegPath from "ffmpeg-static";
 import Innertube from "youtubei.js";
 
 const execFileAsync = promisify(execFile);
+
+// Resolve ffmpeg path at runtime to avoid Turbopack path mangling
+function getFfmpegPath(): string | null {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    return require("ffmpeg-static") as string;
+  } catch {
+    return null;
+  }
+}
 
 // --- YouTube cookies helpers ---
 
@@ -144,9 +153,10 @@ async function downloadWithYoutubei(
   onProgress?.(80);
 
   // Convert to WAV for analysis
-  if (!ffmpegPath) throw new Error("ffmpeg-static not found");
+  const ffmpeg = getFfmpegPath();
+  if (!ffmpeg) throw new Error("ffmpeg-static not found");
 
-  await execFileAsync(ffmpegPath, [
+  await execFileAsync(ffmpeg, [
     "-i", rawAudioPath,
     "-ar", "22050",
     "-ac", "1",
@@ -181,9 +191,10 @@ export async function extractAudio(
   if (hasYtDlp) {
     await downloadWithYtDlp(url, wavPath, onProgress);
     // For yt-dlp, convert WAV to a smaller format for blob upload
-    if (ffmpegPath) {
+    const ffmpegForOgg = getFfmpegPath();
+    if (ffmpegForOgg) {
       try {
-        await execFileAsync(ffmpegPath, [
+        await execFileAsync(ffmpegForOgg, [
           "-i", wavPath,
           "-ar", "44100",
           "-codec:a", "libvorbis",
