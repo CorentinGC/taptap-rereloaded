@@ -8,7 +8,7 @@
     "postinstall": "prisma generate",
     "start": "next start",
     "lint": "eslint",
-    "reset": "npx tsx scripts/reset.ts"
+    "reset": "node --env-file=.env --import tsx scripts/reset.ts"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.6.0",
@@ -38,6 +38,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.1",
     "tailwindcss": "^4",
+    "tsx": "^4.21.0",
     "typescript": "^5"
   }
 }
