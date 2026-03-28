@@ -12,8 +12,12 @@ const execFileAsync = promisify(execFile);
 // Resolve ffmpeg path at runtime to avoid Turbopack path mangling
 function getFfmpegPath(): string | null {
   try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    return require("ffmpeg-static") as string;
+    const modulePath = join(process.cwd(), "node_modules", "ffmpeg-static", "ffmpeg");
+    const { existsSync } = require("fs") as typeof import("fs");
+    if (existsSync(modulePath)) return modulePath;
+    // Fallback: try which ffmpeg
+    const { execSync } = require("child_process") as typeof import("child_process");
+    return execSync("which ffmpeg", { encoding: "utf-8" }).trim() || null;
   } catch {
     return null;
   }
