@@ -58,8 +58,7 @@ export const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
               rel: 0,
             },
             events: {
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              onReady: (_e: any) => {
+              onReady: () => {
                 if (!readyCalled.current) {
                   readyCalled.current = true;
                   onReady?.();

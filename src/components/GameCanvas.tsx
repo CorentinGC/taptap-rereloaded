@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import { GameEngine } from "@/lib/game/engine";
 import { useGameStore } from "@/stores/game-store";
@@ -8,6 +8,12 @@ import type { VideoPlayerRef } from "./VideoPlayer";
 import { VideoPlayer } from "./VideoPlayer";
 import { ScoreDisplay } from "./ScoreDisplay";
 import { LANE_KEYS } from "@/lib/utils/constants";
+
+function getIsTouchDevice() {
+  return typeof window !== "undefined" && "ontouchstart" in window;
+}
+
+const subscribe = () => () => {};
 
 interface GameCanvasProps {
   videoId: string;
@@ -20,7 +26,7 @@ export function GameCanvas({ videoId }: GameCanvasProps) {
   const [countdown, setCountdown] = useState<number | null>(null);
   const [playing, setPlaying] = useState(false);
   const [ready, setReady] = useState(false);
-  const [isTouchDevice, setIsTouchDevice] = useState(false);
+  const isTouchDevice = useSyncExternalStore(subscribe, getIsTouchDevice, () => false);
   const router = useRouter();
 
   const beatmap = useGameStore((s) => s.beatmap);
@@ -33,11 +39,6 @@ export function GameCanvas({ videoId }: GameCanvasProps) {
     setStatus("ended");
     router.push("/results");
   }, [setStatus, router]);
-
-  // Detect touch device
-  useEffect(() => {
-    setIsTouchDevice("ontouchstart" in window);
-  }, []);
 
   // Initialize canvas sizing
   useEffect(() => {
@@ -56,25 +57,30 @@ export function GameCanvas({ videoId }: GameCanvasProps) {
   }, []);
 
   // Start countdown when player is ready
+  const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
   useEffect(() => {
     if (!ready || !beatmap) return;
 
+    let count = 3;
+    setCountdown(count);
     setStatus("countdown");
-    setCountdown(3);
 
-    const interval = setInterval(() => {
-      setCountdown((prev) => {
-        if (prev === null || prev <= 1) {
-          clearInterval(interval);
-          setPlaying(true);
-          setStatus("playing");
-          return null;
-        }
-        return prev - 1;
-      });
+    countdownRef.current = setInterval(() => {
+      count--;
+      if (count <= 0) {
+        if (countdownRef.current) clearInterval(countdownRef.current);
+        setCountdown(null);
+        setPlaying(true);
+        setStatus("playing");
+      } else {
+        setCountdown(count);
+      }
     }, 1000);
 
-    return () => clearInterval(interval);
+    return () => {
+      if (countdownRef.current) clearInterval(countdownRef.current);
+    };
   }, [ready, beatmap, setStatus]);
 
   // Initialize game engine when playing starts

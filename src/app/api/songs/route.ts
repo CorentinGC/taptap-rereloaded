@@ -1,8 +1,20 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 
+interface SongRow {
+  videoId: string;
+  title: string;
+  duration: number;
+  bpm: number;
+  thumbnailUrl: string | null;
+  createdAt: Date;
+  beatmapEasy: unknown;
+  beatmapNormal: unknown;
+  beatmapHard: unknown;
+}
+
 export async function GET() {
-  const songs = await prisma.song.findMany({
+  const songs: SongRow[] = await prisma.song.findMany({
     orderBy: { updatedAt: "desc" },
     take: 20,
     select: {
@@ -18,7 +30,6 @@ export async function GET() {
     },
   });
 
-  // Only send whether each difficulty exists, not the full beatmap data
   const result = songs.map((s) => ({
     videoId: s.videoId,
     title: s.title,

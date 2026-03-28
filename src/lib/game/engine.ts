@@ -1,4 +1,4 @@
-import type { Beatmap, ActiveNote, HitGrade, HitEffect, Difficulty } from "./types";
+import type { Beatmap, ActiveNote, HitGrade, Difficulty } from "./types";
 import { GameRenderer } from "./renderer";
 import { InputHandler } from "./input-handler";
 import { SCROLL_TIME, HIT_LINE_POSITION, DIFFICULTY_CONFIGS } from "@/lib/utils/constants";

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { useGameStore } from "@/stores/game-store";
 import type { Difficulty, Beatmap } from "@/lib/game/types";
 import { DIFFICULTY_CONFIGS } from "@/lib/utils/constants";
@@ -80,10 +81,13 @@ export function SongList() {
             {/* Thumbnail */}
             <div className="w-20 h-12 rounded overflow-hidden flex-shrink-0 bg-zinc-800">
               {song.thumbnailUrl && (
-                <img
+                <Image
                   src={song.thumbnailUrl}
                   alt=""
+                  width={160}
+                  height={90}
                   className="w-full h-full object-cover"
+                  unoptimized
                 />
               )}
             </div>
