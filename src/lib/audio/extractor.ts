@@ -10,22 +10,59 @@ import ytdl from "@distube/ytdl-core";
 
 const execFileAsync = promisify(execFile);
 
+// --- YouTube cookies helpers ---
+
+function parseNetscapeCookies(raw: string): Array<{ name: string; value: string; domain: string; path: string; secure: boolean; expirationDate: number; httpOnly: boolean }> {
+  return raw
+    .split("\n")
+    .filter((l) => l && !l.startsWith("#"))
+    .map((line) => {
+      const [domain, , path, secure, expires, name, value] = line.split("\t");
+      return { domain, path, secure: secure === "TRUE", expirationDate: parseInt(expires, 10), httpOnly: false, name, value };
+    })
+    .filter((c) => c.name && c.value);
+}
+
+function getYtdlAgent(): ReturnType<typeof ytdl.createAgent> | undefined {
+  const b64 = process.env.YOUTUBE_COOKIES_BASE64;
+  if (!b64) return undefined;
+  const raw = Buffer.from(b64, "base64").toString("utf-8");
+  const cookies = parseNetscapeCookies(raw);
+  return ytdl.createAgent(cookies);
+}
+
+let _cookieFilePath: string | undefined;
+
+async function getCookieFilePath(): Promise<string | undefined> {
+  const b64 = process.env.YOUTUBE_COOKIES_BASE64;
+  if (!b64) return undefined;
+  if (_cookieFilePath) return _cookieFilePath;
+  const raw = Buffer.from(b64, "base64").toString("utf-8");
+  const p = join(tmpdir(), `yt-cookies-${randomUUID()}.txt`);
+  await writeFile(p, raw, "utf-8");
+  _cookieFilePath = p;
+  return p;
+}
+
 // Try yt-dlp first (local dev), fall back to ytdl-core (serverless)
 async function downloadWithYtDlp(
   url: string,
   wavPath: string,
   onProgress?: (percent: number) => void
 ): Promise<void> {
+  const cookiePath = await getCookieFilePath();
   return new Promise<void>((resolve, reject) => {
-    const proc = spawn("yt-dlp", [
+    const args = [
       "-x",
       "--audio-format", "wav",
       "--postprocessor-args", `ffmpeg:-ar 22050 -ac 1 -acodec pcm_s16le`,
       "-o", wavPath,
       "--no-playlist",
       "--newline",
+      ...(cookiePath ? ["--cookies", cookiePath] : []),
       url,
-    ]);
+    ];
+    const proc = spawn("yt-dlp", args);
 
     let lastPercent = 0;
 
@@ -66,7 +103,8 @@ async function downloadWithYtdlCore(
   // Download audio to a temp file
   const tempAudio = wavPath.replace(".wav", ".webm");
 
-  const info = await ytdl.getInfo(url);
+  const agent = getYtdlAgent();
+  const info = await ytdl.getInfo(url, { agent });
   const format = ytdl.chooseFormat(info.formats, {
     filter: "audioonly",
     quality: "lowestaudio",
@@ -77,6 +115,7 @@ async function downloadWithYtdlCore(
 
   const stream = ytdl.downloadFromInfo(info, {
     format,
+    agent,
   });
 
   const chunks: Buffer[] = [];
@@ -140,9 +179,15 @@ export async function getVideoInfo(url: string) {
   const hasYtDlp = await isYtDlpAvailable();
 
   if (hasYtDlp) {
+    const cookiePath = await getCookieFilePath();
     const { stdout } = await execFileAsync(
       "yt-dlp",
-      ["--print", "%(title)s\n%(duration)s\n%(id)s", "--no-playlist", url],
+      [
+        "--print", "%(title)s\n%(duration)s\n%(id)s",
+        "--no-playlist",
+        ...(cookiePath ? ["--cookies", cookiePath] : []),
+        url,
+      ],
       { timeout: 30_000 }
     );
     const [title, durationStr, videoId] = stdout.trim().split("\n");
@@ -155,7 +200,8 @@ export async function getVideoInfo(url: string) {
   }
 
   // Fallback: ytdl-core
-  const info = await ytdl.getBasicInfo(url);
+  const agent = getYtdlAgent();
+  const info = await ytdl.getBasicInfo(url, { agent });
   const details = info.videoDetails;
   return {
     title: details.title,
