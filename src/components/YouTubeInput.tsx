@@ -12,7 +12,14 @@ interface StepProgress {
   [stepId: string]: number;
 }
 
-const DIFFICULTIES: Difficulty[] = ["easy", "normal", "hard"];
+const DIFFICULTIES: Difficulty[] = ["easy", "normal", "hard", "expert"];
+
+const DIFFICULTY_COLORS: Record<Difficulty, string> = {
+  easy: "bg-green-600",
+  normal: "bg-blue-600",
+  hard: "bg-red-600",
+  expert: "bg-purple-600",
+};
 
 export function YouTubeInput() {
   const [url, setUrl] = useState("");
@@ -20,8 +27,8 @@ export function YouTubeInput() {
   const [loading, setLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState("info");
   const [stepProgress, setStepProgress] = useState<StepProgress>({});
+  const [pendingVideoId, setPendingVideoId] = useState<string | null>(null);
   const router = useRouter();
-  const setBeatmap = useGameStore((s) => s.setBeatmap);
   const difficulty = useGameStore((s) => s.difficulty);
   const setDifficulty = useGameStore((s) => s.setDifficulty);
 
@@ -47,7 +54,7 @@ export function YouTubeInput() {
       const res = await fetch("/api/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url: trimmedUrl, difficulty }),
+        body: JSON.stringify({ url: trimmedUrl }),
       });
 
       if (!res.ok) {
@@ -84,9 +91,10 @@ export function YouTubeInput() {
           } else if (msg.type === "progress") {
             updateProgress(msg.step, msg.percent);
           } else if (msg.type === "done") {
-            setBeatmap(msg.beatmap);
-            const videoId = extractVideoId(trimmedUrl);
-            router.push(`/game?v=${videoId}`);
+            // Show difficulty picker
+            const vid = msg.videoId ?? extractVideoId(trimmedUrl);
+            setLoading(false);
+            setPendingVideoId(vid);
             return;
           } else if (msg.type === "error") {
             throw new Error(msg.error);
@@ -99,6 +107,11 @@ export function YouTubeInput() {
     }
   }
 
+  function playWithDifficulty(d: Difficulty) {
+    setDifficulty(d);
+    router.push(`/game?v=${pendingVideoId}&d=${d}`);
+  }
+
   if (loading) {
     return (
       <LoadingScreen
@@ -109,30 +122,28 @@ export function YouTubeInput() {
     );
   }
 
+  // Difficulty picker after analysis
+  if (pendingVideoId) {
+    return (
+      <div className="flex flex-col items-center gap-6 w-full">
+        <h2 className="text-xl font-semibold">Choisis ta difficulté</h2>
+        <div className="flex flex-wrap gap-3 justify-center">
+          {DIFFICULTIES.map((d) => (
+            <button
+              key={d}
+              onClick={() => playWithDifficulty(d)}
+              className={`px-6 py-3 rounded-lg text-base font-medium text-white transition-all hover:opacity-90 ${DIFFICULTY_COLORS[d]}`}
+            >
+              {DIFFICULTY_CONFIGS[d].label}
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full">
-      {/* Difficulty selector */}
-      <div className="flex gap-2 justify-center">
-        {DIFFICULTIES.map((d) => (
-          <button
-            key={d}
-            type="button"
-            onClick={() => setDifficulty(d)}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-              difficulty === d
-                ? d === "easy"
-                  ? "bg-green-600 text-white"
-                  : d === "normal"
-                  ? "bg-blue-600 text-white"
-                  : "bg-red-600 text-white"
-                : "bg-zinc-800 text-zinc-400 hover:bg-zinc-700"
-            }`}
-          >
-            {DIFFICULTY_CONFIGS[d].label}
-          </button>
-        ))}
-      </div>
-
       <div className="flex gap-2">
         <input
           type="text"
@@ -145,7 +156,7 @@ export function YouTubeInput() {
           type="submit"
           className="px-6 py-3 rounded-lg bg-gradient-to-r from-red-500 to-blue-500 font-semibold hover:opacity-90 transition-opacity"
         >
-          Jouer
+          Analyser
         </button>
       </div>
       {error && <p className="text-red-400 text-sm text-center">{error}</p>}

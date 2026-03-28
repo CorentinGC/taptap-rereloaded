@@ -3,19 +3,17 @@ import { analyzeAudio } from "@/lib/audio/analyzer";
 import { generateBeatmap } from "@/lib/audio/beatmap-generator";
 import { isValidYouTubeUrl, extractVideoId } from "@/lib/utils/youtube";
 import { prisma } from "@/lib/db";
-import type { Difficulty } from "@/lib/game/types";
+import { put } from "@vercel/blob";
+import { readFile } from "fs/promises";
+import type { Difficulty, Beatmap } from "@/lib/game/types";
 
 export const maxDuration = 120;
 
-const BEATMAP_COLUMN: Record<Difficulty, "beatmapEasy" | "beatmapNormal" | "beatmapHard"> = {
-  easy: "beatmapEasy",
-  normal: "beatmapNormal",
-  hard: "beatmapHard",
-};
+const ALL_DIFFICULTIES: Difficulty[] = ["easy", "normal", "hard", "expert"];
 
 export async function POST(request: Request) {
   try {
-    const { url, difficulty = "normal" } = await request.json();
+    const { url } = await request.json();
 
     if (!url || !isValidYouTubeUrl(url)) {
       return new Response(
@@ -32,17 +30,15 @@ export async function POST(request: Request) {
       );
     }
 
-    const column = BEATMAP_COLUMN[difficulty as Difficulty] ?? "beatmapNormal";
-
-    // Check cache (non-blocking: if DB fails, proceed with analysis)
+    // Check cache
     let cached: Awaited<ReturnType<typeof prisma.song.findUnique>> = null;
     try {
       cached = await prisma.song.findUnique({ where: { videoId } });
     } catch (dbError) {
       console.error("DB cache lookup failed (non-blocking):", dbError);
     }
-    if (cached && cached[column]) {
-      // Return cached beatmap immediately via SSE
+
+    if (cached && cached.beatmapNormal && cached.audioUrl) {
       const encoder = new TextEncoder();
       const stream = new ReadableStream({
         start(controller) {
@@ -53,7 +49,7 @@ export async function POST(request: Request) {
           );
           controller.enqueue(
             encoder.encode(
-              `data: ${JSON.stringify({ type: "done", beatmap: cached[column] })}\n\n`
+              `data: ${JSON.stringify({ type: "done", videoId, audioUrl: cached.audioUrl })}\n\n`
             )
           );
           controller.close();
@@ -91,7 +87,7 @@ export async function POST(request: Request) {
           sendProgress("info", 100);
 
           sendStep("download", 0);
-          const { wavPath, cleanup } = await extractAudio(url, (pct) => {
+          const { wavPath, audioPath, audioContentType, cleanup } = await extractAudio(url, (pct) => {
             sendProgress("download", pct);
           });
 
@@ -101,22 +97,48 @@ export async function POST(request: Request) {
               sendProgress("analyze", pct);
             });
 
+            // Generate ALL difficulties
             sendStep("beatmap", 0);
-            const beatmap = generateBeatmap(
-              info.videoId,
-              info.duration,
-              bpm,
-              onsets,
-              difficulty as Difficulty
-            );
+            const beatmaps: Record<string, Beatmap> = {};
+            for (const diff of ALL_DIFFICULTIES) {
+              beatmaps[diff] = generateBeatmap(
+                info.videoId,
+                info.duration,
+                bpm,
+                onsets,
+                diff
+              );
+            }
             sendProgress("beatmap", 100);
 
+            // Upload MP3 to Vercel Blob
+            sendStep("upload", 0);
+            let audioUrl: string | null = null;
+            try {
+              const audioBuffer = await readFile(audioPath);
+              const ext = audioContentType === "audio/webm" ? "webm" : "ogg";
+              const blob = await put(`audio/${info.videoId}.${ext}`, audioBuffer, {
+                access: "public",
+                contentType: audioContentType,
+              });
+              audioUrl = blob.url;
+            } catch (uploadError) {
+              console.error("Blob upload error (non-blocking):", uploadError);
+            }
+            sendProgress("upload", 100);
+
             // Save to database
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const toJson = (v: unknown) => v as any;
             try {
               await prisma.song.upsert({
                 where: { videoId: info.videoId },
                 update: {
-                  [column]: beatmap as unknown as Record<string, unknown>,
+                  beatmapEasy: toJson(beatmaps.easy),
+                  beatmapNormal: toJson(beatmaps.normal),
+                  beatmapHard: toJson(beatmaps.hard),
+                  beatmapExpert: toJson(beatmaps.expert),
+                  audioUrl,
                   bpm,
                 },
                 create: {
@@ -126,14 +148,18 @@ export async function POST(request: Request) {
                   duration: info.duration,
                   bpm,
                   thumbnailUrl: info.thumbnailUrl,
-                  [column]: beatmap as unknown as Record<string, unknown>,
+                  audioUrl,
+                  beatmapEasy: toJson(beatmaps.easy),
+                  beatmapNormal: toJson(beatmaps.normal),
+                  beatmapHard: toJson(beatmaps.hard),
+                  beatmapExpert: toJson(beatmaps.expert),
                 },
               });
             } catch (dbError) {
               console.error("DB save error (non-blocking):", dbError);
             }
 
-            send({ type: "done", beatmap });
+            send({ type: "done", videoId: info.videoId, audioUrl });
           } finally {
             await cleanup();
           }

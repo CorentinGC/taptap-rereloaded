@@ -11,6 +11,7 @@ interface SongRow {
   beatmapEasy: unknown;
   beatmapNormal: unknown;
   beatmapHard: unknown;
+  beatmapExpert: unknown;
 }
 
 export async function GET() {
@@ -27,6 +28,7 @@ export async function GET() {
       beatmapEasy: true,
       beatmapNormal: true,
       beatmapHard: true,
+      beatmapExpert: true,
     },
   });
 
@@ -41,6 +43,7 @@ export async function GET() {
       easy: s.beatmapEasy !== null,
       normal: s.beatmapNormal !== null,
       hard: s.beatmapHard !== null,
+      expert: s.beatmapExpert !== null,
     },
   }));
 

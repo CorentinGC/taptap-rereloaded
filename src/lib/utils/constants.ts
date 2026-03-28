@@ -33,4 +33,10 @@ export const DIFFICULTY_CONFIGS: Record<Difficulty, DifficultyConfig> = {
     goodWindow: 0.08,
     label: "Difficile",
   },
+  expert: {
+    notePercentage: 1.0,
+    perfectWindow: 0.025,
+    goodWindow: 0.06,
+    label: "Expert",
+  },
 };

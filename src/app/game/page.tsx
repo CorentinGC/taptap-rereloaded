@@ -1,12 +1,13 @@
 import { GameCanvas } from "@/components/GameCanvas";
 
 interface GamePageProps {
-  searchParams: Promise<{ v?: string }>;
+  searchParams: Promise<{ v?: string; d?: string }>;
 }
 
 export default async function GamePage({ searchParams }: GamePageProps) {
   const params = await searchParams;
   const videoId = params.v;
+  const difficulty = params.d ?? "normal";
 
   if (!videoId) {
     return (
@@ -16,5 +17,5 @@ export default async function GamePage({ searchParams }: GamePageProps) {
     );
   }
 
-  return <GameCanvas videoId={videoId} />;
+  return <GameCanvas videoId={videoId} difficulty={difficulty} />;
 }

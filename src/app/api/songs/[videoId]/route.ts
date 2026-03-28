@@ -2,10 +2,11 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import type { Difficulty } from "@/lib/game/types";
 
-const BEATMAP_COLUMN: Record<Difficulty, "beatmapEasy" | "beatmapNormal" | "beatmapHard"> = {
+const BEATMAP_COLUMN: Record<Difficulty, "beatmapEasy" | "beatmapNormal" | "beatmapHard" | "beatmapExpert"> = {
   easy: "beatmapEasy",
   normal: "beatmapNormal",
   hard: "beatmapHard",
+  expert: "beatmapExpert",
 };
 
 export async function GET(
@@ -28,5 +29,8 @@ export async function GET(
     );
   }
 
-  return NextResponse.json(song[column]);
+  return NextResponse.json({
+    beatmap: song[column],
+    audioUrl: song.audioUrl,
+  });
 }

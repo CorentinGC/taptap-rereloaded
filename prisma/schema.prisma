@@ -14,9 +14,11 @@ model Song {
   duration      Int
   bpm           Int
   thumbnailUrl  String?
+  audioUrl      String?
   beatmapEasy   Json?
   beatmapNormal Json?
   beatmapHard   Json?
+  beatmapExpert Json?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 }

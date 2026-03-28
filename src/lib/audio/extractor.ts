@@ -120,6 +120,7 @@ async function downloadWithYtDlp(
 async function downloadWithYoutubei(
   url: string,
   wavPath: string,
+  rawAudioPath: string,
   onProgress?: (percent: number) => void
 ): Promise<void> {
   const yt = await getInnertube();
@@ -138,15 +139,15 @@ async function downloadWithYoutubei(
     if (result.value) chunks.push(result.value);
   }
 
-  const tempAudio = wavPath.replace(".wav", ".webm");
-  await writeFile(tempAudio, Buffer.concat(chunks));
+  // Save original audio for blob upload
+  await writeFile(rawAudioPath, Buffer.concat(chunks));
   onProgress?.(80);
 
-  // Convert to WAV using ffmpeg-static
+  // Convert to WAV for analysis
   if (!ffmpegPath) throw new Error("ffmpeg-static not found");
 
   await execFileAsync(ffmpegPath, [
-    "-i", tempAudio,
+    "-i", rawAudioPath,
     "-ar", "22050",
     "-ac", "1",
     "-acodec", "pcm_s16le",
@@ -154,7 +155,6 @@ async function downloadWithYoutubei(
     wavPath,
   ], { timeout: 60_000 });
 
-  await unlink(tempAudio).catch(() => {});
   onProgress?.(100);
 }
 
@@ -171,20 +171,51 @@ function extractVideoIdFromUrl(url: string): string {
 export async function extractAudio(
   url: string,
   onProgress?: (percent: number) => void
-): Promise<{ wavPath: string; cleanup: () => Promise<void> }> {
-  const wavPath = join(tmpdir(), `taptap-${randomUUID()}.wav`);
+): Promise<{ wavPath: string; audioPath: string; audioContentType: string; cleanup: () => Promise<void> }> {
+  const id = randomUUID();
+  const wavPath = join(tmpdir(), `taptap-${id}.wav`);
+  const rawAudioPath = join(tmpdir(), `taptap-${id}.webm`);
 
   const hasYtDlp = await isYtDlpAvailable();
 
   if (hasYtDlp) {
     await downloadWithYtDlp(url, wavPath, onProgress);
-  } else {
-    await downloadWithYoutubei(url, wavPath, onProgress);
+    // For yt-dlp, convert WAV to a smaller format for blob upload
+    if (ffmpegPath) {
+      try {
+        await execFileAsync(ffmpegPath, [
+          "-i", wavPath,
+          "-codec:a", "libvorbis",
+          "-b:a", "128k",
+          "-y",
+          rawAudioPath.replace(".webm", ".ogg"),
+        ], { timeout: 60_000 });
+      } catch (err) {
+        console.error("FFmpeg OGG conversion failed:", err);
+      }
+    }
+    const oggPath = rawAudioPath.replace(".webm", ".ogg");
+    return {
+      wavPath,
+      audioPath: oggPath,
+      audioContentType: "audio/ogg",
+      cleanup: async () => {
+        await unlink(wavPath).catch(() => {});
+        await unlink(oggPath).catch(() => {});
+      },
+    };
   }
 
+  // youtubei.js: keeps the original webm audio
+  await downloadWithYoutubei(url, wavPath, rawAudioPath, onProgress);
   return {
     wavPath,
-    cleanup: () => unlink(wavPath).catch(() => {}),
+    audioPath: rawAudioPath,
+    audioContentType: "audio/webm",
+    cleanup: async () => {
+      await unlink(wavPath).catch(() => {});
+      await unlink(rawAudioPath).catch(() => {});
+    },
   };
 }
 

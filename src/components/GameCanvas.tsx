@@ -5,8 +5,6 @@ import { useRouter } from "next/navigation";
 import { GameEngine } from "@/lib/game/engine";
 import { useGameStore } from "@/stores/game-store";
 import type { Beatmap } from "@/lib/game/types";
-import type { VideoPlayerRef } from "./VideoPlayer";
-import { VideoPlayer } from "./VideoPlayer";
 import { ScoreDisplay } from "./ScoreDisplay";
 import { LANE_KEYS } from "@/lib/utils/constants";
 
@@ -18,38 +16,31 @@ const subscribe = () => () => {};
 
 interface GameCanvasProps {
   videoId: string;
+  difficulty: string;
 }
 
-export function GameCanvas({ videoId }: GameCanvasProps) {
+export function GameCanvas({ videoId, difficulty: difficultyParam }: GameCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const playerRef = useRef<VideoPlayerRef>(null);
+  const audioRef = useRef<HTMLAudioElement>(null);
   const engineRef = useRef<GameEngine | null>(null);
   const [countdown, setCountdown] = useState<number | null>(null);
   const [playing, setPlaying] = useState(false);
   const [ready, setReady] = useState(false);
   const [loadingBeatmap, setLoadingBeatmap] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const isTouchDevice = useSyncExternalStore(subscribe, getIsTouchDevice, () => false);
   const router = useRouter();
 
-  const storeBeatmap = useGameStore((s) => s.beatmap);
-  const setBeatmap = useGameStore((s) => s.setBeatmap);
-  const difficulty = useGameStore((s) => s.difficulty);
+  const difficulty = (difficultyParam || "normal") as import("@/lib/game/types").Difficulty;
   const updateScore = useGameStore((s) => s.updateScore);
   const setStatus = useGameStore((s) => s.setStatus);
   const setCurrentTime = useGameStore((s) => s.setCurrentTime);
 
-  // Local beatmap state: prefer store, fallback to fetched
-  const [fetchedBeatmap, setFetchedBeatmap] = useState<Beatmap | null>(null);
-  const beatmap = storeBeatmap ?? fetchedBeatmap;
+  const [beatmap, setBeatmap] = useState<Beatmap | null>(null);
 
-  // Fetch beatmap from API if not in store
+  // Fetch beatmap + audioUrl from API
   useEffect(() => {
-    if (storeBeatmap) {
-      setLoadingBeatmap(false);
-      return;
-    }
-
     let cancelled = false;
     async function fetchBeatmap() {
       try {
@@ -58,10 +49,10 @@ export function GameCanvas({ videoId }: GameCanvasProps) {
           if (!cancelled) setError("Beatmap non trouvée. Retourne à l'accueil pour analyser la chanson.");
           return;
         }
-        const data: Beatmap = await res.json();
+        const data = await res.json();
         if (!cancelled) {
-          setFetchedBeatmap(data);
-          setBeatmap(data);
+          setBeatmap(data.beatmap);
+          setAudioUrl(data.audioUrl);
         }
       } catch {
         if (!cancelled) setError("Impossible de charger la beatmap");
@@ -72,14 +63,14 @@ export function GameCanvas({ videoId }: GameCanvasProps) {
 
     fetchBeatmap();
     return () => { cancelled = true; };
-  }, [videoId, difficulty, storeBeatmap, setBeatmap]);
+  }, [videoId, difficulty]);
 
   const handleEnd = useCallback(() => {
     setStatus("ended");
     router.push("/results");
   }, [setStatus, router]);
 
-  // Initialize canvas sizing (re-run when beatmap loads since canvas may not exist yet)
+  // Initialize canvas sizing
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -95,9 +86,7 @@ export function GameCanvas({ videoId }: GameCanvasProps) {
     return () => window.removeEventListener("resize", resize);
   }, [beatmap]);
 
-  // Start video + countdown when player is ready
-  const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null);
-
+  // Audio ready → start countdown
   useEffect(() => {
     if (!ready || !beatmap) return;
 
@@ -105,13 +94,13 @@ export function GameCanvas({ videoId }: GameCanvasProps) {
     setCountdown(count);
     setStatus("countdown");
 
-    countdownRef.current = setInterval(() => {
+    const interval = setInterval(() => {
       count--;
       if (count <= 0) {
-        if (countdownRef.current) clearInterval(countdownRef.current);
+        clearInterval(interval);
         setCountdown(null);
-        // Start video and engine at the same time
-        playerRef.current?.play();
+        // Start audio and engine together
+        audioRef.current?.play();
         setPlaying(true);
         setStatus("playing");
       } else {
@@ -119,9 +108,7 @@ export function GameCanvas({ videoId }: GameCanvasProps) {
       }
     }, 1000);
 
-    return () => {
-      if (countdownRef.current) clearInterval(countdownRef.current);
-    };
+    return () => clearInterval(interval);
   }, [ready, beatmap, setStatus]);
 
   // Initialize game engine when playing starts
@@ -129,14 +116,13 @@ export function GameCanvas({ videoId }: GameCanvasProps) {
     const canvas = canvasRef.current;
     if (!canvas || !beatmap || !playing) return;
 
-    // Ensure canvas is sized before engine reads dimensions
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
     const engine = new GameEngine(
       canvas,
       beatmap,
-      () => playerRef.current?.getCurrentTime() ?? 0,
+      () => audioRef.current?.currentTime ?? 0,
       {
         onScoreUpdate: updateScore,
         onTimeUpdate: setCurrentTime,
@@ -181,13 +167,21 @@ export function GameCanvas({ videoId }: GameCanvasProps) {
         style={{ touchAction: "none" }}
       />
 
-      <VideoPlayer
-        ref={playerRef}
-        videoId={videoId}
-        playing={playing}
-        onReady={() => setReady(true)}
-        onEnded={handleEnd}
-      />
+      {/* Hidden audio player */}
+      {audioUrl && (
+        <audio
+          ref={audioRef}
+          src={audioUrl}
+          preload="auto"
+          onCanPlayThrough={() => setReady(true)}
+          onEnded={handleEnd}
+        />
+      )}
+      {!audioUrl && !loadingBeatmap && (
+        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20 bg-red-900/80 px-4 py-2 rounded text-sm">
+          Audio non disponible
+        </div>
+      )}
 
       <ScoreDisplay />
 
