@@ -1,5 +1,5 @@
 {
-  "version": "2.6",
+  "version": "2.9",
   "children": [
     {
       "type": "frame",
@@ -12,6 +12,2291 @@
       "height": 600,
       "fill": "#FFFFFF",
       "layout": "none"
+    },
+    {
+      "type": "frame",
+      "id": "CluWP",
+      "x": 0,
+      "y": 0,
+      "name": "Tap Tap Beats - Architecture",
+      "width": 1500,
+      "fill": "#F8FAFC",
+      "cornerRadius": 16,
+      "layout": "vertical",
+      "gap": 40,
+      "padding": 48,
+      "children": [
+        {
+          "type": "text",
+          "id": "XgmZx",
+          "name": "title",
+          "fill": "#0F172A",
+          "content": "Tap Tap Beats — Architecture Serverless",
+          "fontFamily": "Inter",
+          "fontSize": 32,
+          "fontWeight": "700"
+        },
+        {
+          "type": "text",
+          "id": "Wm7Fl",
+          "name": "subtitle",
+          "fill": "#64748B",
+          "content": "Next.js 16 + Vercel + Supabase PostgreSQL + Vercel Blob",
+          "fontFamily": "Inter",
+          "fontSize": 16
+        },
+        {
+          "type": "frame",
+          "id": "hCLlf",
+          "name": "Columns",
+          "width": "fill_container",
+          "gap": 32,
+          "children": [
+            {
+              "type": "frame",
+              "id": "js9GN",
+              "name": "Client (Navigateur)",
+              "width": "fill_container",
+              "fill": "#EFF6FF",
+              "cornerRadius": 12,
+              "stroke": {
+                "thickness": 2,
+                "fill": "#BFDBFE"
+              },
+              "layout": "vertical",
+              "gap": 16,
+              "padding": 20,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "mn9pd",
+                  "name": "col1title",
+                  "fill": "#1E40AF",
+                  "content": "CLIENT (Navigateur)",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "700",
+                  "letterSpacing": 1
+                },
+                {
+                  "type": "frame",
+                  "id": "CeW5c",
+                  "name": "Page Home",
+                  "width": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 8,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "#DBEAFE"
+                  },
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": 16,
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "eEgFo",
+                      "name": "homeIcon",
+                      "width": 24,
+                      "height": 24,
+                      "iconFontName": "home",
+                      "iconFontFamily": "lucide",
+                      "fill": "#3B82F6"
+                    },
+                    {
+                      "type": "text",
+                      "id": "BRH3J",
+                      "name": "homeTitle",
+                      "fill": "#1E3A5F",
+                      "content": "/ Page d'accueil",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "shY27",
+                      "name": "homeDesc",
+                      "fill": "#64748B",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Coller un lien YouTube\nListe des morceaux analysés\nChoix de la difficulté",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Inter",
+                      "fontSize": 11
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "yItf2",
+                  "name": "Page Game",
+                  "width": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 8,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "#DBEAFE"
+                  },
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": 16,
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "fsVmD",
+                      "name": "gameIcon",
+                      "width": 24,
+                      "height": 24,
+                      "iconFontName": "gamepad-2",
+                      "iconFontFamily": "lucide",
+                      "fill": "#3B82F6"
+                    },
+                    {
+                      "type": "text",
+                      "id": "lSMhR",
+                      "name": "gameTitle",
+                      "fill": "#1E3A5F",
+                      "content": "/game — Jeu rhythm",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "LxW0R",
+                      "name": "gameDesc",
+                      "fill": "#64748B",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Canvas HTML5 (60 fps)\nAudio streaming <audio>\nClavier D/F/J/K ou tactile\nScore temps réel",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Inter",
+                      "fontSize": 11
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "19Sd7",
+                  "name": "Page Results",
+                  "width": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 8,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "#DBEAFE"
+                  },
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": 16,
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "B38Vh",
+                      "name": "resIcon",
+                      "width": 24,
+                      "height": 24,
+                      "iconFontName": "trophy",
+                      "iconFontFamily": "lucide",
+                      "fill": "#3B82F6"
+                    },
+                    {
+                      "type": "text",
+                      "id": "yHkSd",
+                      "name": "resTitle",
+                      "fill": "#1E3A5F",
+                      "content": "/results — Résultats",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "y9RTn",
+                      "name": "resDesc",
+                      "fill": "#64748B",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Grade S/A/B/C/D\nScore, combo, précision\nRejouer ou nouveau morceau",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Inter",
+                      "fontSize": 11
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "FZ1xp",
+                  "name": "State",
+                  "width": "fill_container",
+                  "fill": "#FEF3C7",
+                  "cornerRadius": 8,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "#FCD34D"
+                  },
+                  "layout": "vertical",
+                  "gap": 6,
+                  "padding": 12,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "7APiA",
+                      "name": "stateTitle",
+                      "fill": "#92400E",
+                      "content": "Zustand Store (état local)",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "ey422",
+                      "name": "stateDesc",
+                      "fill": "#A16207",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "beatmap, difficulté, score, combo",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "DPfqo",
+              "name": "Vercel Serverless",
+              "width": "fill_container",
+              "fill": "#F5F3FF",
+              "cornerRadius": 12,
+              "stroke": {
+                "thickness": 2,
+                "fill": "#C4B5FD"
+              },
+              "layout": "vertical",
+              "gap": 16,
+              "padding": 20,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "JgFMJ",
+                  "name": "col2title",
+                  "fill": "#5B21B6",
+                  "content": "VERCEL SERVERLESS (Next.js)",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "700",
+                  "letterSpacing": 1
+                },
+                {
+                  "type": "frame",
+                  "id": "Fnrar",
+                  "name": "POST /api/analyze",
+                  "width": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 8,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "#DDD6FE"
+                  },
+                  "layout": "vertical",
+                  "gap": 6,
+                  "padding": 14,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "jzgKo",
+                      "name": "api1badge",
+                      "fill": "#7C3AED",
+                      "cornerRadius": 4,
+                      "padding": [
+                        4,
+                        10
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "tP82P",
+                          "name": "api1badgeTxt",
+                          "fill": "#FFFFFF",
+                          "content": "POST /api/analyze",
+                          "fontFamily": "monospace",
+                          "fontSize": 11,
+                          "fontWeight": "700"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "nxuVY",
+                      "name": "api1desc",
+                      "fill": "#4C1D95",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Pipeline SSE (Server-Sent Events) :\n1. Récupère infos vidéo (titre, durée)\n2. Télécharge l'audio via youtubei.js\n3. Analyse audio (FFT, détection BPM)\n4. Génère 4 beatmaps (easy→expert)\n5. Upload audio sur Vercel Blob\n6. Sauvegarde en base PostgreSQL",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "XMuSM",
+                  "name": "GET /api/songs",
+                  "width": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 8,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "#DDD6FE"
+                  },
+                  "layout": "vertical",
+                  "gap": 6,
+                  "padding": 14,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "kuo4O",
+                      "name": "api2badge",
+                      "fill": "#2563EB",
+                      "cornerRadius": 4,
+                      "padding": [
+                        4,
+                        10
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "kK0bG",
+                          "name": "api2badgeTxt",
+                          "fill": "#FFFFFF",
+                          "content": "GET /api/songs",
+                          "fontFamily": "monospace",
+                          "fontSize": 11,
+                          "fontWeight": "700"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "AS9cg",
+                      "name": "api2desc",
+                      "fill": "#4C1D95",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Liste les 20 derniers morceaux\nanalysés depuis PostgreSQL",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "lL3Nw",
+                  "name": "GET /api/songs/[videoId]",
+                  "width": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 8,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "#DDD6FE"
+                  },
+                  "layout": "vertical",
+                  "gap": 6,
+                  "padding": 14,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "kA6Ig",
+                      "name": "api3badge",
+                      "fill": "#2563EB",
+                      "cornerRadius": 4,
+                      "padding": [
+                        4,
+                        10
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "rKeGB",
+                          "name": "api3badgeTxt",
+                          "fill": "#FFFFFF",
+                          "content": "GET /api/songs/[videoId]",
+                          "fontFamily": "monospace",
+                          "fontSize": 11,
+                          "fontWeight": "700"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "kr9h4",
+                      "name": "api3desc",
+                      "fill": "#4C1D95",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Retourne le beatmap + audioUrl\npour une vidéo et difficulté donnée",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Ls3d8",
+                  "name": "GET /api/audio/[videoId]",
+                  "width": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 8,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "#DDD6FE"
+                  },
+                  "layout": "vertical",
+                  "gap": 6,
+                  "padding": 14,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "ZiwHQ",
+                      "name": "api4badge",
+                      "fill": "#059669",
+                      "cornerRadius": 4,
+                      "padding": [
+                        4,
+                        10
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "JMnBI",
+                          "name": "api4badgeTxt",
+                          "fill": "#FFFFFF",
+                          "content": "GET /api/audio/[videoId]",
+                          "fontFamily": "monospace",
+                          "fontSize": 11,
+                          "fontWeight": "700"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "2CaN8",
+                      "name": "api4desc",
+                      "fill": "#4C1D95",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Proxy audio streaming\nSupport Range headers (seeking)\nLit depuis Vercel Blob (privé)",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "ILBey",
+              "name": "Services Externes",
+              "width": "fill_container",
+              "fill": "#ECFDF5",
+              "cornerRadius": 12,
+              "stroke": {
+                "thickness": 2,
+                "fill": "#A7F3D0"
+              },
+              "layout": "vertical",
+              "gap": 16,
+              "padding": 20,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "DG4mA",
+                  "name": "col3title",
+                  "fill": "#065F46",
+                  "content": "SERVICES EXTERNES",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "700",
+                  "letterSpacing": 1
+                },
+                {
+                  "type": "frame",
+                  "id": "oO0HT",
+                  "name": "YouTube",
+                  "width": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 8,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "#FCA5A5"
+                  },
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": 16,
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "iXNQ1",
+                      "name": "ytIcon",
+                      "width": 28,
+                      "height": 28,
+                      "iconFontName": "youtube",
+                      "iconFontFamily": "lucide",
+                      "fill": "#DC2626"
+                    },
+                    {
+                      "type": "text",
+                      "id": "1uG5w",
+                      "name": "ytTitle",
+                      "fill": "#991B1B",
+                      "content": "YouTube",
+                      "fontFamily": "Inter",
+                      "fontSize": 15,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "V0pPs",
+                      "name": "ytDesc",
+                      "fill": "#7F1D1D",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Via youtubei.js (client TV)\nStream audio de la vidéo\nMétadonnées (titre, durée)\nAuth via cookies base64",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Swxdu",
+                  "name": "Vercel Blob",
+                  "width": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 8,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "#A7F3D0"
+                  },
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": 16,
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "maD6N",
+                      "name": "blobIcon",
+                      "width": 28,
+                      "height": 28,
+                      "iconFontName": "hard-drive",
+                      "iconFontFamily": "lucide",
+                      "fill": "#059669"
+                    },
+                    {
+                      "type": "text",
+                      "id": "HreBt",
+                      "name": "blobTitle",
+                      "fill": "#065F46",
+                      "content": "Vercel Blob Storage",
+                      "fontFamily": "Inter",
+                      "fontSize": 15,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "u8Dc4",
+                      "name": "blobDesc",
+                      "fill": "#064E3B",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Stockage fichiers audio (privé)\n/audio/{videoId}.ogg\nAccès via Bearer token\nStreaming avec Range headers",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "fk3IE",
+                  "name": "PostgreSQL",
+                  "width": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 8,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "#93C5FD"
+                  },
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": 16,
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "QDMr8",
+                      "name": "pgIcon",
+                      "width": 28,
+                      "height": 28,
+                      "iconFontName": "database",
+                      "iconFontFamily": "lucide",
+                      "fill": "#2563EB"
+                    },
+                    {
+                      "type": "text",
+                      "id": "T6Ktt",
+                      "name": "pgTitle",
+                      "fill": "#1E3A8A",
+                      "content": "PostgreSQL (Supabase)",
+                      "fontFamily": "Inter",
+                      "fontSize": 15,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "CB0lC",
+                      "name": "pgDesc",
+                      "fill": "#1E3A8A",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Table Song :\n• videoId, title, duration, bpm\n• thumbnailUrl, audioUrl\n• beatmapEasy/Normal/Hard/Expert\nAccès via Prisma (pooled)",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "z3izg",
+                  "name": "FFmpeg",
+                  "width": "fill_container",
+                  "fill": "#FFF7ED",
+                  "cornerRadius": 8,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "#FDBA74"
+                  },
+                  "layout": "vertical",
+                  "gap": 6,
+                  "padding": 12,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "ADGU1",
+                      "name": "ffmpegTitle",
+                      "fill": "#9A3412",
+                      "content": "FFmpeg (serverless)",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "Pgi2P",
+                      "name": "ffmpegDesc",
+                      "fill": "#9A3412",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Conversion audio → WAV 22kHz mono\nAnalyse FFT + détection de beats",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "7F4bS",
+          "name": "Data Flows",
+          "width": "fill_container",
+          "fill": "#F1F5F9",
+          "cornerRadius": 12,
+          "stroke": {
+            "thickness": 1,
+            "fill": "#CBD5E1"
+          },
+          "layout": "vertical",
+          "gap": 16,
+          "padding": 24,
+          "children": [
+            {
+              "type": "text",
+              "id": "RFB6T",
+              "name": "flowsTitle",
+              "fill": "#0F172A",
+              "content": "Flux de données — Parcours utilisateur",
+              "fontFamily": "Inter",
+              "fontSize": 18,
+              "fontWeight": "700"
+            },
+            {
+              "type": "frame",
+              "id": "mOnof",
+              "name": "Flow Grid",
+              "width": "fill_container",
+              "gap": 20,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "BWqHS",
+                  "name": "Flow Analyze",
+                  "width": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 8,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "#E2E8F0"
+                  },
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": 16,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "bH8O1",
+                      "name": "flow1title",
+                      "fill": "#7C3AED",
+                      "content": "1. Analyser un morceau",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "FjOsj",
+                      "name": "flow1steps",
+                      "fill": "#334155",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Client → POST /api/analyze {url}\nServer → YouTube (télécharge audio)\nServer → FFmpeg (convertit WAV)\nServer → Analyse FFT (détecte BPM)\nServer → Génère 4 beatmaps\nServer → Vercel Blob (upload audio)\nServer → PostgreSQL (sauvegarde)\nServer → Client (SSE stream progress)",
+                      "lineHeight": 1.6,
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "yKv22",
+                  "name": "Flow Play",
+                  "width": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 8,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "#E2E8F0"
+                  },
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": 16,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "7LOK4",
+                      "name": "flow2title",
+                      "fill": "#2563EB",
+                      "content": "2. Jouer un morceau",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "HjDrL",
+                      "name": "flow2steps",
+                      "fill": "#334155",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Client → GET /api/songs/[id]?d=normal\nServer → PostgreSQL (lit beatmap)\nServer → Client (JSON beatmap+url)\nClient → GET /api/audio/[id]\nServer → Vercel Blob (lit audio)\nServer → Client (audio stream)\nClient → Canvas 60fps + <audio>\nClient → Clavier D/F/J/K → scoring",
+                      "lineHeight": 1.6,
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "j8Sat",
+                  "name": "Flow Browse",
+                  "width": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 8,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "#E2E8F0"
+                  },
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": 16,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Rf6Al",
+                      "name": "flow3title",
+                      "fill": "#059669",
+                      "content": "3. Parcourir les morceaux",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "CQAjA",
+                      "name": "flow3steps",
+                      "fill": "#334155",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Client → GET /api/songs\nServer → PostgreSQL\n  (20 derniers morceaux)\nServer → Client (JSON liste)\nClient → Affiche SongList\nClient → Sélection difficulté\nClient → Navigation vers /game",
+                      "lineHeight": 1.6,
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "fFTPF",
+          "name": "Légende",
+          "width": "fill_container",
+          "gap": 24,
+          "padding": 16,
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "3OC9B",
+              "name": "leg1",
+              "gap": 8,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 3,
+                  "id": "EL9ML",
+                  "name": "leg1dot",
+                  "fill": "#3B82F6",
+                  "width": 12,
+                  "height": 12
+                },
+                {
+                  "type": "text",
+                  "id": "vl7NL",
+                  "name": "leg1txt",
+                  "fill": "#64748B",
+                  "content": "Client (React)",
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "XFXNy",
+              "name": "leg2",
+              "gap": 8,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 3,
+                  "id": "wrtl5",
+                  "name": "leg2dot",
+                  "fill": "#7C3AED",
+                  "width": 12,
+                  "height": 12
+                },
+                {
+                  "type": "text",
+                  "id": "6lfqN",
+                  "name": "leg2txt",
+                  "fill": "#64748B",
+                  "content": "Serverless (Vercel)",
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "N0KUK",
+              "name": "leg3",
+              "gap": 8,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 3,
+                  "id": "Ivi5S",
+                  "name": "leg3dot",
+                  "fill": "#059669",
+                  "width": 12,
+                  "height": 12
+                },
+                {
+                  "type": "text",
+                  "id": "i7IVM",
+                  "name": "leg3txt",
+                  "fill": "#64748B",
+                  "content": "Services Externes",
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "ArJrU",
+              "name": "leg4",
+              "gap": 8,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 3,
+                  "id": "IWGA3",
+                  "name": "leg4dot",
+                  "fill": "#F59E0B",
+                  "width": 12,
+                  "height": 12
+                },
+                {
+                  "type": "text",
+                  "id": "U0jHr",
+                  "name": "leg4txt",
+                  "fill": "#64748B",
+                  "content": "État local (Zustand)",
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "MWGBS",
+      "x": 0,
+      "y": 1411,
+      "name": "Flowchart - Pipeline complet",
+      "width": 1600,
+      "fill": "#0F172A",
+      "cornerRadius": 16,
+      "layout": "vertical",
+      "gap": 32,
+      "padding": 48,
+      "children": [
+        {
+          "type": "text",
+          "id": "nek2j",
+          "name": "ftitle",
+          "fill": "#F8FAFC",
+          "content": "Pipeline complet — De l'URL YouTube au jeu",
+          "fontFamily": "Inter",
+          "fontSize": 28,
+          "fontWeight": "700"
+        },
+        {
+          "type": "text",
+          "id": "CgxRY",
+          "name": "fsub",
+          "fill": "#94A3B8",
+          "content": "Chaque étape montre qui fait quoi, où ça tourne, et ce qui est transmis",
+          "fontFamily": "Inter",
+          "fontSize": 14,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "frame",
+          "id": "2vkGt",
+          "name": "Phase 1 - Analyse",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 20,
+          "children": [
+            {
+              "type": "frame",
+              "id": "1epw8",
+              "name": "ph1label",
+              "fill": "#7C3AED",
+              "cornerRadius": 6,
+              "padding": [
+                6,
+                14
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "xkBLW",
+                  "name": "ph1txt",
+                  "fill": "#FFFFFF",
+                  "content": "PHASE 1 — Analyser un nouveau morceau",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "700"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "Q2mGn",
+              "name": "Row 1",
+              "width": "fill_container",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "rbTyj",
+                  "name": "Step 1",
+                  "width": 220,
+                  "fill": "#1E293B",
+                  "cornerRadius": 12,
+                  "stroke": {
+                    "thickness": 2,
+                    "fill": "#3B82F6"
+                  },
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": [
+                    20,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "a8jhg",
+                      "name": "s1icon",
+                      "width": 32,
+                      "height": 32,
+                      "iconFontName": "link",
+                      "iconFontFamily": "lucide",
+                      "fill": "#60A5FA"
+                    },
+                    {
+                      "type": "text",
+                      "id": "tWKa4",
+                      "name": "s1title",
+                      "fill": "#F8FAFC",
+                      "content": "Utilisateur",
+                      "textAlign": "center",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "IRdqi",
+                      "name": "s1desc",
+                      "fill": "#94A3B8",
+                      "textGrowth": "fixed-width",
+                      "width": 180,
+                      "content": "Colle un lien YouTube\ndans l'input",
+                      "lineHeight": 1.5,
+                      "textAlign": "center",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "IVRxZ",
+                  "name": "arr1",
+                  "width": 60,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "7k4xZ",
+                      "name": "arr1txt",
+                      "fill": "#7C3AED",
+                      "content": "→",
+                      "fontFamily": "Inter",
+                      "fontSize": 28,
+                      "fontWeight": "700"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "T6Yzm",
+                  "name": "Step 2",
+                  "width": 220,
+                  "fill": "#1E293B",
+                  "cornerRadius": 12,
+                  "stroke": {
+                    "thickness": 2,
+                    "fill": "#7C3AED"
+                  },
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": [
+                    20,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "zGQlN",
+                      "name": "s2icon",
+                      "width": 32,
+                      "height": 32,
+                      "iconFontName": "server",
+                      "iconFontFamily": "lucide",
+                      "fill": "#A78BFA"
+                    },
+                    {
+                      "type": "text",
+                      "id": "zJqyD",
+                      "name": "s2title",
+                      "fill": "#A78BFA",
+                      "content": "POST /api/analyze",
+                      "textAlign": "center",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "z0AZf",
+                      "name": "s2desc",
+                      "fill": "#94A3B8",
+                      "textGrowth": "fixed-width",
+                      "width": 180,
+                      "content": "Fonction serverless\nOuvre un flux SSE\nvers le client",
+                      "lineHeight": 1.5,
+                      "textAlign": "center",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "GVZQY",
+                  "name": "arr2",
+                  "width": 60,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "0bc15",
+                      "name": "arr2txt",
+                      "fill": "#7C3AED",
+                      "content": "→",
+                      "fontFamily": "Inter",
+                      "fontSize": 28,
+                      "fontWeight": "700"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "93huq",
+                  "name": "Step 3",
+                  "width": 220,
+                  "fill": "#1E293B",
+                  "cornerRadius": 12,
+                  "stroke": {
+                    "thickness": 2,
+                    "fill": "#EF4444"
+                  },
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": [
+                    20,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "LWsPK",
+                      "name": "s3icon",
+                      "width": 32,
+                      "height": 32,
+                      "iconFontName": "youtube",
+                      "iconFontFamily": "lucide",
+                      "fill": "#F87171"
+                    },
+                    {
+                      "type": "text",
+                      "id": "okNKV",
+                      "name": "s3title",
+                      "fill": "#F87171",
+                      "content": "YouTube",
+                      "textAlign": "center",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "S38qR",
+                      "name": "s3desc",
+                      "fill": "#94A3B8",
+                      "textGrowth": "fixed-width",
+                      "width": 180,
+                      "content": "youtubei.js (client TV)\nRécupère titre, durée\nTélécharge le flux audio",
+                      "lineHeight": 1.5,
+                      "textAlign": "center",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "7ZtBC",
+                  "name": "arr3",
+                  "width": 60,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "DBR6C",
+                      "name": "arr3txt",
+                      "fill": "#7C3AED",
+                      "content": "→",
+                      "fontFamily": "Inter",
+                      "fontSize": 28,
+                      "fontWeight": "700"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "GijBr",
+                  "name": "Step 4",
+                  "width": 220,
+                  "fill": "#1E293B",
+                  "cornerRadius": 12,
+                  "stroke": {
+                    "thickness": 2,
+                    "fill": "#F59E0B"
+                  },
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": [
+                    20,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "wpAaS",
+                      "name": "s4icon",
+                      "width": 32,
+                      "height": 32,
+                      "iconFontName": "audio-waveform",
+                      "iconFontFamily": "lucide",
+                      "fill": "#FBBF24"
+                    },
+                    {
+                      "type": "text",
+                      "id": "h7Pr4",
+                      "name": "s4title",
+                      "fill": "#FBBF24",
+                      "content": "FFmpeg",
+                      "textAlign": "center",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "w7Tgc",
+                      "name": "s4desc",
+                      "fill": "#94A3B8",
+                      "textGrowth": "fixed-width",
+                      "width": 180,
+                      "content": "Convertit en WAV\n22050 Hz, mono, 16-bit\nFichier temporaire /tmp",
+                      "lineHeight": 1.5,
+                      "textAlign": "center",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "VjzOZ",
+              "name": "Row 2",
+              "width": "fill_container",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "JAzWa",
+                  "name": "darr",
+                  "width": 220,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "8e2mZ",
+                      "name": "darrtxt",
+                      "fill": "#F59E0B",
+                      "content": "↓  fichier WAV",
+                      "textAlign": "center",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "600"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "WibOt",
+              "name": "Row 3",
+              "width": "fill_container",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "iePdU",
+                  "name": "Step 5 Analyse",
+                  "width": 260,
+                  "fill": "#1E293B",
+                  "cornerRadius": 12,
+                  "stroke": {
+                    "thickness": 2,
+                    "fill": "#F59E0B"
+                  },
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": [
+                    20,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "04I1I",
+                      "name": "s5icon",
+                      "width": 32,
+                      "height": 32,
+                      "iconFontName": "activity",
+                      "iconFontFamily": "lucide",
+                      "fill": "#FBBF24"
+                    },
+                    {
+                      "type": "text",
+                      "id": "XwMlK",
+                      "name": "s5title",
+                      "fill": "#FBBF24",
+                      "content": "Analyse Audio",
+                      "textAlign": "center",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "jKX5H",
+                      "name": "s5desc",
+                      "fill": "#94A3B8",
+                      "textGrowth": "fixed-width",
+                      "width": 220,
+                      "content": "FFT (Cooley-Tukey 1024)\nFlux spectral + seuil adaptatif\nDétection BPM (autocorrélation)\nOnsets = moments des beats",
+                      "lineHeight": 1.5,
+                      "textAlign": "center",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "FhIJp",
+                  "name": "arr5",
+                  "width": 50,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "PfChV",
+                      "name": "arr5txt",
+                      "fill": "#10B981",
+                      "content": "→",
+                      "fontFamily": "Inter",
+                      "fontSize": 28,
+                      "fontWeight": "700"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "jgB3a",
+                  "name": "Step 6 Beatmap",
+                  "width": 260,
+                  "fill": "#1E293B",
+                  "cornerRadius": 12,
+                  "stroke": {
+                    "thickness": 2,
+                    "fill": "#10B981"
+                  },
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": [
+                    20,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "Lrcau",
+                      "name": "s6icon",
+                      "width": 32,
+                      "height": 32,
+                      "iconFontName": "music",
+                      "iconFontFamily": "lucide",
+                      "fill": "#34D399"
+                    },
+                    {
+                      "type": "text",
+                      "id": "e1eKL",
+                      "name": "s6title",
+                      "fill": "#34D399",
+                      "content": "Génération Beatmaps",
+                      "textAlign": "center",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "kjbq0",
+                      "name": "s6desc",
+                      "fill": "#94A3B8",
+                      "textGrowth": "fixed-width",
+                      "width": 220,
+                      "content": "4 difficultés :\nEasy (40% notes) → Expert (100%)\nAssigne 4 lanes (D/F/J/K)\nQuantifie sur la grille BPM",
+                      "lineHeight": 1.5,
+                      "textAlign": "center",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "DWYsw",
+                  "name": "arr6",
+                  "width": 50,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "vIRVJ",
+                      "name": "arr6txt",
+                      "fill": "#10B981",
+                      "content": "→",
+                      "fontFamily": "Inter",
+                      "fontSize": 28,
+                      "fontWeight": "700"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "NiUMM",
+                  "name": "Step 7 Upload",
+                  "width": 260,
+                  "fill": "#1E293B",
+                  "cornerRadius": 12,
+                  "stroke": {
+                    "thickness": 2,
+                    "fill": "#059669"
+                  },
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": [
+                    20,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "eUgVY",
+                      "name": "s7icon",
+                      "width": 32,
+                      "height": 32,
+                      "iconFontName": "cloud-upload",
+                      "iconFontFamily": "lucide",
+                      "fill": "#34D399"
+                    },
+                    {
+                      "type": "text",
+                      "id": "RWErN",
+                      "name": "s7title",
+                      "fill": "#34D399",
+                      "content": "Upload Vercel Blob",
+                      "textAlign": "center",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "ZIFHQ",
+                      "name": "s7desc",
+                      "fill": "#94A3B8",
+                      "textGrowth": "fixed-width",
+                      "width": 220,
+                      "content": "Audio original (OGG/WebM)\n→ /audio/{videoId}.ogg\nStockage privé (token)\nImmutable cache headers",
+                      "lineHeight": 1.5,
+                      "textAlign": "center",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "BiN8N",
+                  "name": "arr7",
+                  "width": 50,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "pRurI",
+                      "name": "arr7txt",
+                      "fill": "#2563EB",
+                      "content": "→",
+                      "fontFamily": "Inter",
+                      "fontSize": 28,
+                      "fontWeight": "700"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "SL49e",
+                  "name": "Step 8 Save",
+                  "width": 260,
+                  "fill": "#1E293B",
+                  "cornerRadius": 12,
+                  "stroke": {
+                    "thickness": 2,
+                    "fill": "#2563EB"
+                  },
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": [
+                    20,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "v5FQx",
+                      "name": "s8icon",
+                      "width": 32,
+                      "height": 32,
+                      "iconFontName": "database",
+                      "iconFontFamily": "lucide",
+                      "fill": "#60A5FA"
+                    },
+                    {
+                      "type": "text",
+                      "id": "zmwiJ",
+                      "name": "s8title",
+                      "fill": "#60A5FA",
+                      "content": "Save PostgreSQL",
+                      "textAlign": "center",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "twJ05",
+                      "name": "s8desc",
+                      "fill": "#94A3B8",
+                      "textGrowth": "fixed-width",
+                      "width": 220,
+                      "content": "Upsert table Song\nvideoId, title, bpm, duration\naudioUrl (blob)\n4 beatmaps en JSON",
+                      "lineHeight": 1.5,
+                      "textAlign": "center",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "BiuVc",
+              "name": "SSE Return",
+              "width": "fill_container",
+              "padding": [
+                8,
+                0
+              ],
+              "justifyContent": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "dzwsZ",
+                  "name": "sseBox",
+                  "fill": "#7C3AED22",
+                  "cornerRadius": 8,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "#7C3AED"
+                  },
+                  "gap": 12,
+                  "padding": [
+                    10,
+                    24
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "TUKOv",
+                      "name": "sseTxt",
+                      "fill": "#A78BFA",
+                      "content": "← SSE Stream : info 10% → download 40% → analyze 70% → beatmap 90% → upload 100% → done ✓",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "0ExIa",
+          "name": "Separator",
+          "width": "fill_container",
+          "height": 2,
+          "fill": "#334155"
+        },
+        {
+          "type": "frame",
+          "id": "ch3Bs",
+          "name": "Phase 2 - Jouer",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 20,
+          "children": [
+            {
+              "type": "frame",
+              "id": "UItFp",
+              "name": "ph2label",
+              "fill": "#2563EB",
+              "cornerRadius": 6,
+              "padding": [
+                6,
+                14
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "JbSuH",
+                  "name": "ph2txt",
+                  "fill": "#FFFFFF",
+                  "content": "PHASE 2 — Jouer le morceau",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "700"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "5xz8X",
+              "name": "Row Play",
+              "width": "fill_container",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "LbhnT",
+                  "name": "p1",
+                  "width": 200,
+                  "fill": "#1E293B",
+                  "cornerRadius": 12,
+                  "stroke": {
+                    "thickness": 2,
+                    "fill": "#3B82F6"
+                  },
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": [
+                    20,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "qnj1W",
+                      "name": "p1icon",
+                      "width": 32,
+                      "height": 32,
+                      "iconFontName": "mouse-pointer-click",
+                      "iconFontFamily": "lucide",
+                      "fill": "#60A5FA"
+                    },
+                    {
+                      "type": "text",
+                      "id": "zCSd7",
+                      "name": "p1title",
+                      "fill": "#F8FAFC",
+                      "content": "Choix difficulté",
+                      "textAlign": "center",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "ANwUJ",
+                      "name": "p1desc",
+                      "fill": "#94A3B8",
+                      "textGrowth": "fixed-width",
+                      "width": 170,
+                      "content": "L'utilisateur choisit\neasy / normal /\nhard / expert",
+                      "lineHeight": 1.5,
+                      "textAlign": "center",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "oS7Sj",
+                  "name": "parr1",
+                  "width": 40,
+                  "justifyContent": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "jMc5a",
+                      "name": "parr1t",
+                      "fill": "#2563EB",
+                      "content": "→",
+                      "fontFamily": "Inter",
+                      "fontSize": 28,
+                      "fontWeight": "700"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "S9WGa",
+                  "name": "p2",
+                  "width": 200,
+                  "fill": "#1E293B",
+                  "cornerRadius": 12,
+                  "stroke": {
+                    "thickness": 2,
+                    "fill": "#7C3AED"
+                  },
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": [
+                    20,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "4cZdV",
+                      "name": "p2icon",
+                      "width": 32,
+                      "height": 32,
+                      "iconFontName": "server",
+                      "iconFontFamily": "lucide",
+                      "fill": "#A78BFA"
+                    },
+                    {
+                      "type": "text",
+                      "id": "g2EqX",
+                      "name": "p2title",
+                      "fill": "#A78BFA",
+                      "content": "GET /api/songs/[id]",
+                      "textAlign": "center",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "bNU1F",
+                      "name": "p2desc",
+                      "fill": "#94A3B8",
+                      "textGrowth": "fixed-width",
+                      "width": 170,
+                      "content": "Lit le beatmap\n+ audioUrl depuis\nPostgreSQL",
+                      "lineHeight": 1.5,
+                      "textAlign": "center",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "VIxhf",
+                  "name": "parr2",
+                  "width": 40,
+                  "justifyContent": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "p4X0b",
+                      "name": "parr2t",
+                      "fill": "#2563EB",
+                      "content": "→",
+                      "fontFamily": "Inter",
+                      "fontSize": 28,
+                      "fontWeight": "700"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "VKf81",
+                  "name": "p3",
+                  "width": 200,
+                  "fill": "#1E293B",
+                  "cornerRadius": 12,
+                  "stroke": {
+                    "thickness": 2,
+                    "fill": "#059669"
+                  },
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": [
+                    20,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "SRAyY",
+                      "name": "p3icon",
+                      "width": 32,
+                      "height": 32,
+                      "iconFontName": "volume-2",
+                      "iconFontFamily": "lucide",
+                      "fill": "#34D399"
+                    },
+                    {
+                      "type": "text",
+                      "id": "sMsNK",
+                      "name": "p3title",
+                      "fill": "#34D399",
+                      "content": "GET /api/audio/[id]",
+                      "textAlign": "center",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "MUo62",
+                      "name": "p3desc",
+                      "fill": "#94A3B8",
+                      "textGrowth": "fixed-width",
+                      "width": 170,
+                      "content": "Proxy streaming\naudio depuis\nVercel Blob",
+                      "lineHeight": 1.5,
+                      "textAlign": "center",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "ftf1a",
+                  "name": "parr3",
+                  "width": 40,
+                  "justifyContent": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "ZNQ96",
+                      "name": "parr3t",
+                      "fill": "#2563EB",
+                      "content": "→",
+                      "fontFamily": "Inter",
+                      "fontSize": 28,
+                      "fontWeight": "700"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "kB9i4",
+                  "name": "p4",
+                  "width": 260,
+                  "fill": "#1E293B",
+                  "cornerRadius": 12,
+                  "stroke": {
+                    "thickness": 2,
+                    "fill": "#3B82F6"
+                  },
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": [
+                    20,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "POKAR",
+                      "name": "p4icon",
+                      "width": 32,
+                      "height": 32,
+                      "iconFontName": "monitor",
+                      "iconFontFamily": "lucide",
+                      "fill": "#60A5FA"
+                    },
+                    {
+                      "type": "text",
+                      "id": "JewGb",
+                      "name": "p4title",
+                      "fill": "#60A5FA",
+                      "content": "Game Engine",
+                      "textAlign": "center",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "sKFNQ",
+                      "name": "p4desc",
+                      "fill": "#94A3B8",
+                      "textGrowth": "fixed-width",
+                      "width": 230,
+                      "content": "Canvas 2D (60 fps)\n<audio> HTML5 synchronisé\nNotes défilent de haut en bas\nClavier D/F/J/K = 4 lanes\nScoring : Perfect 300 / Good 100\nCombo multiplier (max 2x)",
+                      "lineHeight": 1.5,
+                      "textAlign": "center",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "fIiq4",
+                  "name": "parr4",
+                  "width": 40,
+                  "justifyContent": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "yRYdP",
+                      "name": "parr4t",
+                      "fill": "#2563EB",
+                      "content": "→",
+                      "fontFamily": "Inter",
+                      "fontSize": 28,
+                      "fontWeight": "700"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "4bLtq",
+                  "name": "p5",
+                  "width": 200,
+                  "fill": "#1E293B",
+                  "cornerRadius": 12,
+                  "stroke": {
+                    "thickness": 2,
+                    "fill": "#F59E0B"
+                  },
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": [
+                    20,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "Hw0Gr",
+                      "name": "p5icon",
+                      "width": 32,
+                      "height": 32,
+                      "iconFontName": "trophy",
+                      "iconFontFamily": "lucide",
+                      "fill": "#FBBF24"
+                    },
+                    {
+                      "type": "text",
+                      "id": "IEBFG",
+                      "name": "p5title",
+                      "fill": "#FBBF24",
+                      "content": "Résultats",
+                      "textAlign": "center",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "1dEaI",
+                      "name": "p5desc",
+                      "fill": "#94A3B8",
+                      "textGrowth": "fixed-width",
+                      "width": 170,
+                      "content": "Grade S/A/B/C/D\nScore + combo max\nPrécision %\nRejouer / Nouveau",
+                      "lineHeight": 1.5,
+                      "textAlign": "center",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "fwwrH",
+          "name": "Separator 2",
+          "width": "fill_container",
+          "height": 2,
+          "fill": "#334155"
+        },
+        {
+          "type": "frame",
+          "id": "9LSK8",
+          "name": "Où ça tourne",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 16,
+          "padding": 20,
+          "children": [
+            {
+              "type": "text",
+              "id": "IR0gz",
+              "name": "envTitle",
+              "fill": "#F8FAFC",
+              "content": "Où ça tourne ?",
+              "fontFamily": "Inter",
+              "fontSize": 16,
+              "fontWeight": "700"
+            },
+            {
+              "type": "frame",
+              "id": "UF69L",
+              "name": "envGrid",
+              "width": "fill_container",
+              "gap": 16,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "Q00QM",
+                  "name": "env1",
+                  "width": "fill_container",
+                  "fill": "#1E293B",
+                  "cornerRadius": 10,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "#3B82F6"
+                  },
+                  "layout": "vertical",
+                  "gap": 6,
+                  "padding": 16,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "ZyfTs",
+                      "name": "env1title",
+                      "fill": "#60A5FA",
+                      "content": "Navigateur de ta copine",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "4jGSq",
+                      "name": "env1desc",
+                      "fill": "#94A3B8",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "React + Canvas 2D + <audio>\nTout le rendu du jeu\nAucun serveur nécessaire pendant le jeu\nZustand gère l'état en mémoire",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "KN7SW",
+                  "name": "env2",
+                  "width": "fill_container",
+                  "fill": "#1E293B",
+                  "cornerRadius": 10,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "#7C3AED"
+                  },
+                  "layout": "vertical",
+                  "gap": 6,
+                  "padding": 16,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "3rQKP",
+                      "name": "env2title",
+                      "fill": "#A78BFA",
+                      "content": "Vercel (serverless, pas de serveur 24/7)",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "qQRPG",
+                      "name": "env2desc",
+                      "fill": "#94A3B8",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Fonctions à la demande (cold start ~1s)\nScale automatiquement (0 → infini)\nPas de serveur à maintenir\nPaye uniquement par exécution",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "IPCqN",
+                  "name": "env3",
+                  "width": "fill_container",
+                  "fill": "#1E293B",
+                  "cornerRadius": 10,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "#059669"
+                  },
+                  "layout": "vertical",
+                  "gap": 6,
+                  "padding": 16,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "FaSfq",
+                      "name": "env3title",
+                      "fill": "#34D399",
+                      "content": "Services cloud managés",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "BasnK",
+                      "name": "env3desc",
+                      "fill": "#94A3B8",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "PostgreSQL → Supabase (AWS Paris)\nBlob Storage → Vercel (fichiers audio)\nYouTube → API Google (gratuit)\nTout est hébergé, rien à installer",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ]
 }
