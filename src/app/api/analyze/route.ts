@@ -118,7 +118,7 @@ export async function POST(request: Request) {
               const audioBuffer = await readFile(audioPath);
               const ext = audioContentType === "audio/webm" ? "webm" : "ogg";
               const blob = await put(`audio/${info.videoId}.${ext}`, audioBuffer, {
-                access: "public",
+                access: "private",
                 contentType: audioContentType,
                 addRandomSuffix: false,
               });

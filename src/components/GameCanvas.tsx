@@ -52,7 +52,8 @@ export function GameCanvas({ videoId, difficulty: difficultyParam }: GameCanvasP
         const data = await res.json();
         if (!cancelled) {
           setBeatmap(data.beatmap);
-          setAudioUrl(data.audioUrl);
+          // Use our API proxy for private blob audio
+          setAudioUrl(data.audioUrl ? `/api/audio/${videoId}` : null);
         }
       } catch {
         if (!cancelled) setError("Impossible de charger la beatmap");
