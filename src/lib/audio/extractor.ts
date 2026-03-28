@@ -127,7 +127,7 @@ async function downloadWithYoutubei(
 
   onProgress?.(5);
 
-  const stream = await yt.download(videoId, { type: "audio", quality: "best" });
+  const stream = await yt.download(videoId, { type: "audio", quality: "best", client: "ANDROID" });
 
   const chunks: Uint8Array[] = [];
   const reader = stream.getReader();
@@ -215,7 +215,7 @@ export async function getVideoInfo(url: string) {
   // Fallback: youtubei.js
   const yt = await getInnertube();
   const videoId = extractVideoIdFromUrl(url);
-  const info = await yt.getBasicInfo(videoId);
+  const info = await yt.getBasicInfo(videoId, { client: "ANDROID" });
   const details = info.basic_info;
   return {
     title: details.title ?? "Unknown",

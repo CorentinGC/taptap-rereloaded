@@ -137,7 +137,11 @@ export class GameEngine {
     this.renderer.render(this.activeNotes);
 
     const lastNote = this.allNotes[this.allNotes.length - 1];
-    if (lastNote && currentTime > lastNote.time + 2) {
+    const endTime = Math.max(
+      this.beatmap.duration,
+      lastNote ? lastNote.time + 2 : 0
+    );
+    if (currentTime > endTime) {
       this.callbacks.onEnd();
       this.stop();
       return;

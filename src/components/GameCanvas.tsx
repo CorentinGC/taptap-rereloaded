@@ -101,9 +101,6 @@ export function GameCanvas({ videoId }: GameCanvasProps) {
   useEffect(() => {
     if (!ready || !beatmap) return;
 
-    // Start video immediately (preserves user gesture context for autoplay)
-    playerRef.current?.play();
-
     let count = 3;
     setCountdown(count);
     setStatus("countdown");
@@ -113,6 +110,8 @@ export function GameCanvas({ videoId }: GameCanvasProps) {
       if (count <= 0) {
         if (countdownRef.current) clearInterval(countdownRef.current);
         setCountdown(null);
+        // Start video and engine at the same time
+        playerRef.current?.play();
         setPlaying(true);
         setStatus("playing");
       } else {
@@ -129,6 +128,10 @@ export function GameCanvas({ videoId }: GameCanvasProps) {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas || !beatmap || !playing) return;
+
+    // Ensure canvas is sized before engine reads dimensions
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 
     const engine = new GameEngine(
       canvas,

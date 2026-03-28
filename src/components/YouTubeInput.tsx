@@ -33,7 +33,8 @@ export function YouTubeInput() {
     e.preventDefault();
     setError("");
 
-    if (!isValidYouTubeUrl(url)) {
+    const trimmedUrl = url.trim();
+    if (!trimmedUrl || !isValidYouTubeUrl(trimmedUrl)) {
       setError("URL YouTube invalide");
       return;
     }
@@ -46,7 +47,7 @@ export function YouTubeInput() {
       const res = await fetch("/api/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url, difficulty }),
+        body: JSON.stringify({ url: trimmedUrl, difficulty }),
       });
 
       if (!res.ok) {
@@ -54,7 +55,11 @@ export function YouTubeInput() {
         throw new Error(data.error || "Erreur lors de l'analyse");
       }
 
-      const reader = res.body!.getReader();
+      if (!res.body) {
+        throw new Error("Le navigateur ne supporte pas le streaming");
+      }
+
+      const reader = res.body.getReader();
       const decoder = new TextDecoder();
       let buffer = "";
 
@@ -80,7 +85,7 @@ export function YouTubeInput() {
             updateProgress(msg.step, msg.percent);
           } else if (msg.type === "done") {
             setBeatmap(msg.beatmap);
-            const videoId = extractVideoId(url);
+            const videoId = extractVideoId(trimmedUrl);
             router.push(`/game?v=${videoId}`);
             return;
           } else if (msg.type === "error") {
