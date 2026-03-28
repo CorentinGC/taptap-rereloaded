@@ -18,8 +18,7 @@ interface VideoPlayerProps {
 export const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
   function VideoPlayer({ videoId, playing, onReady, onEnded }, ref) {
     const containerRef = useRef<HTMLDivElement>(null);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const playerRef = useRef<any>(null);
+    const iframeIdRef = useRef<string | null>(null);
     const playerReady = useRef(false);
     const playingRef = useRef(playing);
     const onReadyRef = useRef(onReady);
@@ -31,18 +30,29 @@ export const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
       playingRef.current = playing;
     });
 
+    // Helper to get the actual YT player with all methods
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    function getPlayer(): any {
+      if (!iframeIdRef.current) return null;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const YT = (window as any).YT;
+      if (!YT?.get) return null;
+      return YT.get(iframeIdRef.current) ?? null;
+    }
+
     useImperativeHandle(ref, () => ({
       getCurrentTime: () => {
-        if (playerReady.current && playerRef.current) {
-          return playerRef.current.getCurrentTime?.() ?? 0;
-        }
-        return 0;
+        if (!playerReady.current) return 0;
+        const player = getPlayer();
+        return player?.getCurrentTime?.() ?? 0;
       },
       play: () => {
-        if (playerReady.current) playerRef.current?.playVideo?.();
+        if (!playerReady.current) return;
+        getPlayer()?.playVideo?.();
       },
       pause: () => {
-        if (playerReady.current) playerRef.current?.pauseVideo?.();
+        if (!playerReady.current) return;
+        getPlayer()?.pauseVideo?.();
       },
     }));
 
@@ -52,12 +62,12 @@ export const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
       const YT = (window as any).YT;
       if (!YT?.Player) return;
 
-      playerRef.current = new YT.Player(containerRef.current, {
+      const player = new YT.Player(containerRef.current, {
         videoId,
         width: "100%",
         height: "100%",
         playerVars: {
-          autoplay: 0,
+          autoplay: 1,
           controls: 0,
           modestbranding: 1,
           disablekb: 1,
@@ -65,11 +75,13 @@ export const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
         },
         events: {
           onReady: () => {
+            // Get the iframe ID for YT.get() usage
+            const iframe = player.getIframe?.();
+            if (iframe) iframeIdRef.current = iframe.id;
             playerReady.current = true;
             onReadyRef.current?.();
-            // If playing was already requested, start now
             if (playingRef.current) {
-              playerRef.current?.playVideo?.();
+              getPlayer()?.playVideo?.();
             }
           },
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -107,18 +119,19 @@ export const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
 
       return () => {
         playerReady.current = false;
-        playerRef.current?.destroy?.();
-        playerRef.current = null;
+        const player = getPlayer();
+        player?.destroy?.();
+        iframeIdRef.current = null;
       };
     }, [initPlayer]);
 
     // Control playback when playing prop changes
     useEffect(() => {
-      if (!playerReady.current || !playerRef.current) return;
+      if (!playerReady.current) return;
       if (playing) {
-        playerRef.current.playVideo?.();
+        getPlayer()?.playVideo?.();
       } else {
-        playerRef.current.pauseVideo?.();
+        getPlayer()?.pauseVideo?.();
       }
     }, [playing]);
 

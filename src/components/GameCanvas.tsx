@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useCallback, useSyncExternalStore } from "
 import { useRouter } from "next/navigation";
 import { GameEngine } from "@/lib/game/engine";
 import { useGameStore } from "@/stores/game-store";
+import type { Beatmap } from "@/lib/game/types";
 import type { VideoPlayerRef } from "./VideoPlayer";
 import { VideoPlayer } from "./VideoPlayer";
 import { ScoreDisplay } from "./ScoreDisplay";
@@ -26,21 +27,59 @@ export function GameCanvas({ videoId }: GameCanvasProps) {
   const [countdown, setCountdown] = useState<number | null>(null);
   const [playing, setPlaying] = useState(false);
   const [ready, setReady] = useState(false);
+  const [loadingBeatmap, setLoadingBeatmap] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const isTouchDevice = useSyncExternalStore(subscribe, getIsTouchDevice, () => false);
   const router = useRouter();
 
-  const beatmap = useGameStore((s) => s.beatmap);
+  const storeBeatmap = useGameStore((s) => s.beatmap);
+  const setBeatmap = useGameStore((s) => s.setBeatmap);
   const difficulty = useGameStore((s) => s.difficulty);
   const updateScore = useGameStore((s) => s.updateScore);
   const setStatus = useGameStore((s) => s.setStatus);
   const setCurrentTime = useGameStore((s) => s.setCurrentTime);
+
+  // Local beatmap state: prefer store, fallback to fetched
+  const [fetchedBeatmap, setFetchedBeatmap] = useState<Beatmap | null>(null);
+  const beatmap = storeBeatmap ?? fetchedBeatmap;
+
+  // Fetch beatmap from API if not in store
+  useEffect(() => {
+    if (storeBeatmap) {
+      setLoadingBeatmap(false);
+      return;
+    }
+
+    let cancelled = false;
+    async function fetchBeatmap() {
+      try {
+        const res = await fetch(`/api/songs/${videoId}?difficulty=${difficulty}`);
+        if (!res.ok) {
+          if (!cancelled) setError("Beatmap non trouvée. Retourne à l'accueil pour analyser la chanson.");
+          return;
+        }
+        const data: Beatmap = await res.json();
+        if (!cancelled) {
+          setFetchedBeatmap(data);
+          setBeatmap(data);
+        }
+      } catch {
+        if (!cancelled) setError("Impossible de charger la beatmap");
+      } finally {
+        if (!cancelled) setLoadingBeatmap(false);
+      }
+    }
+
+    fetchBeatmap();
+    return () => { cancelled = true; };
+  }, [videoId, difficulty, storeBeatmap, setBeatmap]);
 
   const handleEnd = useCallback(() => {
     setStatus("ended");
     router.push("/results");
   }, [setStatus, router]);
 
-  // Initialize canvas sizing
+  // Initialize canvas sizing (re-run when beatmap loads since canvas may not exist yet)
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -54,13 +93,16 @@ export function GameCanvas({ videoId }: GameCanvasProps) {
     resize();
     window.addEventListener("resize", resize);
     return () => window.removeEventListener("resize", resize);
-  }, []);
+  }, [beatmap]);
 
-  // Start countdown when player is ready
+  // Start video + countdown when player is ready
   const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     if (!ready || !beatmap) return;
+
+    // Start video immediately (preserves user gesture context for autoplay)
+    playerRef.current?.play();
 
     let count = 3;
     setCountdown(count);
@@ -106,10 +148,24 @@ export function GameCanvas({ videoId }: GameCanvasProps) {
     return () => engine.destroy();
   }, [playing, beatmap, difficulty, updateScore, setCurrentTime, handleEnd]);
 
-  if (!beatmap) {
+  if (loadingBeatmap) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <p className="text-zinc-400">Aucune beatmap chargée</p>
+        <p className="text-zinc-400">Chargement de la beatmap...</p>
+      </div>
+    );
+  }
+
+  if (error || !beatmap) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen gap-4">
+        <p className="text-zinc-400">{error ?? "Aucune beatmap chargée"}</p>
+        <button
+          onClick={() => router.push("/")}
+          className="px-4 py-2 rounded bg-zinc-800 text-zinc-300 hover:bg-zinc-700"
+        >
+          Retour à l'accueil
+        </button>
       </div>
     );
   }

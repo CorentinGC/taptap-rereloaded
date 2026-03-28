@@ -6,45 +6,65 @@ import { spawn } from "child_process";
 import { execFile } from "child_process";
 import { promisify } from "util";
 import ffmpegPath from "ffmpeg-static";
-import ytdl from "@distube/ytdl-core";
+import Innertube from "youtubei.js";
 
 const execFileAsync = promisify(execFile);
 
 // --- YouTube cookies helpers ---
 
-function parseNetscapeCookies(raw: string): Array<{ name: string; value: string; domain: string; path: string; secure: boolean; expirationDate: number; httpOnly: boolean }> {
+function getNetscapeCookieString(): string | undefined {
+  const b64 = process.env.YOUTUBE_COOKIES_BASE64;
+  if (!b64) return undefined;
+  return Buffer.from(b64, "base64").toString("utf-8");
+}
+
+/** Convert Netscape cookie file to "name=value; name2=value2" header format */
+function netscapeToCookieHeader(raw: string): string {
   return raw
     .split("\n")
     .filter((l) => l && !l.startsWith("#"))
     .map((line) => {
-      const [domain, , path, secure, expires, name, value] = line.split("\t");
-      return { domain, path, secure: secure === "TRUE", expirationDate: parseInt(expires, 10), httpOnly: false, name, value };
+      const parts = line.split("\t");
+      if (parts.length >= 7) return `${parts[5]}=${parts[6]}`;
+      return null;
     })
-    .filter((c) => c.name && c.value);
-}
-
-function getYtdlAgent(): ReturnType<typeof ytdl.createAgent> | undefined {
-  const b64 = process.env.YOUTUBE_COOKIES_BASE64;
-  if (!b64) return undefined;
-  const raw = Buffer.from(b64, "base64").toString("utf-8");
-  const cookies = parseNetscapeCookies(raw);
-  return ytdl.createAgent(cookies);
+    .filter(Boolean)
+    .join("; ");
 }
 
 let _cookieFilePath: string | undefined;
 
 async function getCookieFilePath(): Promise<string | undefined> {
-  const b64 = process.env.YOUTUBE_COOKIES_BASE64;
-  if (!b64) return undefined;
+  const raw = getNetscapeCookieString();
+  if (!raw) return undefined;
   if (_cookieFilePath) return _cookieFilePath;
-  const raw = Buffer.from(b64, "base64").toString("utf-8");
   const p = join(tmpdir(), `yt-cookies-${randomUUID()}.txt`);
   await writeFile(p, raw, "utf-8");
   _cookieFilePath = p;
   return p;
 }
 
-// Try yt-dlp first (local dev), fall back to ytdl-core (serverless)
+let _innertube: Innertube | undefined;
+
+async function getInnertube(): Promise<Innertube> {
+  if (_innertube) return _innertube;
+  const raw = getNetscapeCookieString();
+  const cookie = raw ? netscapeToCookieHeader(raw) : undefined;
+  _innertube = await Innertube.create({ cookie });
+  return _innertube;
+}
+
+// --- yt-dlp (local dev only) ---
+
+async function isYtDlpAvailable(): Promise<boolean> {
+  try {
+    await execFileAsync("yt-dlp", ["--version"], { timeout: 5_000 });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 async function downloadWithYtDlp(
   url: string,
   wavPath: string,
@@ -95,40 +115,32 @@ async function downloadWithYtDlp(
   });
 }
 
-async function downloadWithYtdlCore(
+// --- youtubei.js (serverless / fallback) ---
+
+async function downloadWithYoutubei(
   url: string,
   wavPath: string,
   onProgress?: (percent: number) => void
 ): Promise<void> {
-  // Download audio to a temp file
-  const tempAudio = wavPath.replace(".wav", ".webm");
+  const yt = await getInnertube();
+  const videoId = extractVideoIdFromUrl(url);
 
-  const agent = getYtdlAgent();
-  const info = await ytdl.getInfo(url, { agent });
-  const format = ytdl.chooseFormat(info.formats, {
-    filter: "audioonly",
-    quality: "lowestaudio",
-  });
+  onProgress?.(5);
 
-  const totalBytes = format.contentLength ? parseInt(format.contentLength, 10) : 0;
-  let downloadedBytes = 0;
+  const stream = await yt.download(videoId, { type: "audio", quality: "best" });
 
-  const stream = ytdl.downloadFromInfo(info, {
-    format,
-    agent,
-  });
-
-  const chunks: Buffer[] = [];
-  for await (const chunk of stream) {
-    chunks.push(chunk as Buffer);
-    downloadedBytes += (chunk as Buffer).length;
-    if (totalBytes > 0) {
-      onProgress?.(Math.min(Math.round((downloadedBytes / totalBytes) * 90), 90));
-    }
+  const chunks: Uint8Array[] = [];
+  const reader = stream.getReader();
+  let done = false;
+  while (!done) {
+    const result = await reader.read();
+    done = result.done;
+    if (result.value) chunks.push(result.value);
   }
 
+  const tempAudio = wavPath.replace(".wav", ".webm");
   await writeFile(tempAudio, Buffer.concat(chunks));
-  onProgress?.(92);
+  onProgress?.(80);
 
   // Convert to WAV using ffmpeg-static
   if (!ffmpegPath) throw new Error("ffmpeg-static not found");
@@ -146,14 +158,15 @@ async function downloadWithYtdlCore(
   onProgress?.(100);
 }
 
-async function isYtDlpAvailable(): Promise<boolean> {
-  try {
-    await execFileAsync("yt-dlp", ["--version"], { timeout: 5_000 });
-    return true;
-  } catch {
-    return false;
-  }
+function extractVideoIdFromUrl(url: string): string {
+  const match = url.match(
+    /(?:youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/)|youtu\.be\/|music\.youtube\.com\/watch\?v=)([\w-]{11})/
+  );
+  if (!match) throw new Error(`Invalid YouTube URL: ${url}`);
+  return match[1];
 }
+
+// --- Public API ---
 
 export async function extractAudio(
   url: string,
@@ -166,7 +179,7 @@ export async function extractAudio(
   if (hasYtDlp) {
     await downloadWithYtDlp(url, wavPath, onProgress);
   } else {
-    await downloadWithYtdlCore(url, wavPath, onProgress);
+    await downloadWithYoutubei(url, wavPath, onProgress);
   }
 
   return {
@@ -199,16 +212,17 @@ export async function getVideoInfo(url: string) {
     };
   }
 
-  // Fallback: ytdl-core
-  const agent = getYtdlAgent();
-  const info = await ytdl.getBasicInfo(url, { agent });
-  const details = info.videoDetails;
+  // Fallback: youtubei.js
+  const yt = await getInnertube();
+  const videoId = extractVideoIdFromUrl(url);
+  const info = await yt.getBasicInfo(videoId);
+  const details = info.basic_info;
   return {
-    title: details.title,
-    duration: parseInt(details.lengthSeconds, 10),
-    videoId: details.videoId,
+    title: details.title ?? "Unknown",
+    duration: details.duration ?? 0,
+    videoId: details.id ?? videoId,
     thumbnailUrl:
-      details.thumbnails?.[details.thumbnails.length - 1]?.url ??
-      `https://img.youtube.com/vi/${details.videoId}/hqdefault.jpg`,
+      details.thumbnail?.[details.thumbnail.length - 1]?.url ??
+      `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
   };
 }
