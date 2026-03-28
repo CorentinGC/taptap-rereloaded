@@ -2,7 +2,7 @@ import { prisma } from "@/lib/db";
 import { head } from "@vercel/blob";
 
 export async function GET(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ videoId: string }> }
 ) {
   const { videoId } = await params;
@@ -17,27 +17,38 @@ export async function GET(
   }
 
   try {
-    // Get blob metadata
     const blobInfo = await head(song.audioUrl);
-
-    // Fetch with token for private blobs
     const token = process.env.BLOB_READ_WRITE_TOKEN;
-    const res = await fetch(song.audioUrl, {
-      headers: token ? { Authorization: `Bearer ${token}` } : {},
-    });
 
-    if (!res.ok) {
-      console.error("Blob fetch failed:", res.status, await res.text());
+    // Forward Range header for proper audio streaming
+    const headers: Record<string, string> = {};
+    if (token) headers["Authorization"] = `Bearer ${token}`;
+
+    const rangeHeader = request.headers.get("Range");
+    if (rangeHeader) headers["Range"] = rangeHeader;
+
+    const res = await fetch(song.audioUrl, { headers });
+
+    if (!res.ok && res.status !== 206) {
       return new Response("Audio not available", { status: 502 });
     }
 
+    const responseHeaders: Record<string, string> = {
+      "Content-Type": blobInfo.contentType ?? "audio/ogg",
+      "Accept-Ranges": "bytes",
+      "Cache-Control": "public, max-age=31536000, immutable",
+    };
+
+    // Forward range response headers
+    const contentRange = res.headers.get("Content-Range");
+    if (contentRange) responseHeaders["Content-Range"] = contentRange;
+
+    const contentLength = res.headers.get("Content-Length");
+    if (contentLength) responseHeaders["Content-Length"] = contentLength;
+
     return new Response(res.body, {
-      headers: {
-        "Content-Type": blobInfo.contentType ?? "audio/ogg",
-        "Content-Length": String(blobInfo.size),
-        "Cache-Control": "public, max-age=31536000, immutable",
-        "Accept-Ranges": "bytes",
-      },
+      status: res.status, // 200 or 206
+      headers: responseHeaders,
     });
   } catch (err) {
     console.error("Audio proxy error:", err);
