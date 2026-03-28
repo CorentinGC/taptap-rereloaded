@@ -185,6 +185,7 @@ export async function extractAudio(
       try {
         await execFileAsync(ffmpegPath, [
           "-i", wavPath,
+          "-ar", "44100",
           "-codec:a", "libvorbis",
           "-b:a", "128k",
           "-y",
