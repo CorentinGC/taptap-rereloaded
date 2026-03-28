@@ -1,6 +1,6 @@
 "use client";
 
-import { forwardRef, useImperativeHandle, useRef, useEffect } from "react";
+import { forwardRef, useImperativeHandle, useRef, useEffect, useCallback } from "react";
 
 export interface VideoPlayerRef {
   getCurrentTime: () => number;
@@ -20,69 +20,101 @@ export const VideoPlayer = forwardRef<VideoPlayerRef, VideoPlayerProps>(
     const containerRef = useRef<HTMLDivElement>(null);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const playerRef = useRef<any>(null);
-    const readyCalled = useRef(false);
+    const playerReady = useRef(false);
+    const playingRef = useRef(playing);
+    const onReadyRef = useRef(onReady);
+    const onEndedRef = useRef(onEnded);
+
+    useEffect(() => {
+      onReadyRef.current = onReady;
+      onEndedRef.current = onEnded;
+      playingRef.current = playing;
+    });
 
     useImperativeHandle(ref, () => ({
       getCurrentTime: () => {
-        if (playerRef.current) {
+        if (playerReady.current && playerRef.current) {
           return playerRef.current.getCurrentTime?.() ?? 0;
         }
         return 0;
       },
-      play: () => playerRef.current?.playVideo?.(),
-      pause: () => playerRef.current?.pauseVideo?.(),
+      play: () => {
+        if (playerReady.current) playerRef.current?.playVideo?.();
+      },
+      pause: () => {
+        if (playerReady.current) playerRef.current?.pauseVideo?.();
+      },
     }));
 
+    const initPlayer = useCallback(() => {
+      if (!containerRef.current) return;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const YT = (window as any).YT;
+      if (!YT?.Player) return;
+
+      playerRef.current = new YT.Player(containerRef.current, {
+        videoId,
+        width: "100%",
+        height: "100%",
+        playerVars: {
+          autoplay: 0,
+          controls: 0,
+          modestbranding: 1,
+          disablekb: 1,
+          rel: 0,
+        },
+        events: {
+          onReady: () => {
+            playerReady.current = true;
+            onReadyRef.current?.();
+            // If playing was already requested, start now
+            if (playingRef.current) {
+              playerRef.current?.playVideo?.();
+            }
+          },
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          onStateChange: (e: any) => {
+            if (e.data === YT.PlayerState.ENDED) {
+              onEndedRef.current?.();
+            }
+          },
+        },
+      });
+    }, [videoId]);
+
     useEffect(() => {
-      // Load YouTube IFrame API
       if (typeof window === "undefined") return;
 
-      const tag = document.createElement("script");
-      tag.src = "https://www.youtube.com/iframe_api";
-      document.head.appendChild(tag);
-
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (window as any).onYouTubeIframeAPIReady = () => {
+      const YT = (window as any).YT;
+
+      if (YT?.Player) {
+        initPlayer();
+      } else {
+        if (!document.querySelector('script[src*="youtube.com/iframe_api"]')) {
+          const tag = document.createElement("script");
+          tag.src = "https://www.youtube.com/iframe_api";
+          document.head.appendChild(tag);
+        }
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        playerRef.current = new (window as any).YT.Player(
-          containerRef.current!,
-          {
-            videoId,
-            width: "100%",
-            height: "100%",
-            playerVars: {
-              autoplay: 0,
-              controls: 0,
-              modestbranding: 1,
-              disablekb: 1,
-              rel: 0,
-            },
-            events: {
-              onReady: () => {
-                if (!readyCalled.current) {
-                  readyCalled.current = true;
-                  onReady?.();
-                }
-              },
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              onStateChange: (e: any) => {
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                if (e.data === (window as any).YT.PlayerState.ENDED) {
-                  onEnded?.();
-                }
-              },
-            },
-          }
-        );
-      };
+        const prevCallback = (window as any).onYouTubeIframeAPIReady;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (window as any).onYouTubeIframeAPIReady = () => {
+          prevCallback?.();
+          initPlayer();
+        };
+      }
 
       return () => {
+        playerReady.current = false;
         playerRef.current?.destroy?.();
+        playerRef.current = null;
       };
-    }, [videoId, onReady, onEnded]);
+    }, [initPlayer]);
 
+    // Control playback when playing prop changes
     useEffect(() => {
-      if (!playerRef.current) return;
+      if (!playerReady.current || !playerRef.current) return;
       if (playing) {
         playerRef.current.playVideo?.();
       } else {

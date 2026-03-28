@@ -34,8 +34,13 @@ export async function POST(request: Request) {
 
     const column = BEATMAP_COLUMN[difficulty as Difficulty] ?? "beatmapNormal";
 
-    // Check cache
-    const cached = await prisma.song.findUnique({ where: { videoId } });
+    // Check cache (non-blocking: if DB fails, proceed with analysis)
+    let cached: Awaited<ReturnType<typeof prisma.song.findUnique>> = null;
+    try {
+      cached = await prisma.song.findUnique({ where: { videoId } });
+    } catch (dbError) {
+      console.error("DB cache lookup failed (non-blocking):", dbError);
+    }
     if (cached && cached[column]) {
       // Return cached beatmap immediately via SSE
       const encoder = new TextEncoder();
