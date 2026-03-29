@@ -5,7 +5,6 @@ import { unlink, writeFile } from "fs/promises";
 import { spawn } from "child_process";
 import { execFile } from "child_process";
 import { promisify } from "util";
-import Innertube from "youtubei.js";
 
 const execFileAsync = promisify(execFile);
 
@@ -15,7 +14,6 @@ function getFfmpegPath(): string | null {
     const modulePath = join(process.cwd(), "node_modules", "ffmpeg-static", "ffmpeg");
     const { existsSync } = require("fs") as typeof import("fs");
     if (existsSync(modulePath)) return modulePath;
-    // Fallback: try which ffmpeg
     const { execSync } = require("child_process") as typeof import("child_process");
     return execSync("which ffmpeg", { encoding: "utf-8" }).trim() || null;
   } catch {
@@ -31,20 +29,6 @@ function getNetscapeCookieString(): string | undefined {
   return Buffer.from(b64, "base64").toString("utf-8");
 }
 
-/** Convert Netscape cookie file to "name=value; name2=value2" header format */
-function netscapeToCookieHeader(raw: string): string {
-  return raw
-    .split("\n")
-    .filter((l) => l && !l.startsWith("#"))
-    .map((line) => {
-      const parts = line.split("\t");
-      if (parts.length >= 7) return `${parts[5]}=${parts[6]}`;
-      return null;
-    })
-    .filter(Boolean)
-    .join("; ");
-}
-
 let _cookieFilePath: string | undefined;
 
 async function getCookieFilePath(): Promise<string | undefined> {
@@ -57,33 +41,86 @@ async function getCookieFilePath(): Promise<string | undefined> {
   return p;
 }
 
-let _innertube: Innertube | undefined;
+// --- Railway yt-dlp service ---
 
-async function getInnertube(): Promise<Innertube> {
-  if (_innertube) return _innertube;
+const YTDLP_API_URL = process.env.YTDLP_API_URL; // e.g. https://ytdlp-api-production.up.railway.app
+const YTDLP_API_SECRET = process.env.YTDLP_API_SECRET;
 
-  // Provide an async JS evaluator for URL deciphering (required since youtubei.js v16+)
-  const { Platform } = await import("youtubei.js");
-  const vm = await import("vm");
-  const shim = Platform.shim;
-  Platform.load({
-    ...shim,
-    eval: async (script, env) => {
-      const context = { ...env };
-      vm.createContext(context);
-      vm.runInContext(script.output, context);
-      const result: Record<string, unknown> = {};
-      for (const key of script.exported) {
-        result[key] = context[key];
-      }
-      return result;
+async function downloadWithRailway(
+  url: string,
+  wavPath: string,
+  rawAudioPath: string,
+  onProgress?: (percent: number) => void
+): Promise<string> {
+  if (!YTDLP_API_URL) throw new Error("YTDLP_API_URL not configured");
+
+  onProgress?.(5);
+
+  const res = await fetch(`${YTDLP_API_URL}/download`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...(YTDLP_API_SECRET ? { Authorization: `Bearer ${YTDLP_API_SECRET}` } : {}),
     },
+    body: JSON.stringify({
+      url,
+      cookies_b64: process.env.YOUTUBE_COOKIES_BASE64 ?? "",
+      format: "ogg",
+    }),
   });
 
-  const raw = getNetscapeCookieString();
-  const cookie = raw ? netscapeToCookieHeader(raw) : undefined;
-  _innertube = await Innertube.create({ cookie });
-  return _innertube;
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: "Unknown error" }));
+    throw new Error(`Railway yt-dlp failed: ${err.error || res.statusText}`);
+  }
+
+  onProgress?.(70);
+
+  // Save the audio file
+  const contentType = res.headers.get("Content-Type") ?? "audio/ogg";
+  const buffer = Buffer.from(await res.arrayBuffer());
+  await writeFile(rawAudioPath, buffer);
+
+  onProgress?.(80);
+
+  // Convert to WAV for analysis
+  const ffmpeg = getFfmpegPath();
+  if (!ffmpeg) throw new Error("ffmpeg-static not found");
+
+  await execFileAsync(ffmpeg, [
+    "-i", rawAudioPath,
+    "-ar", "22050",
+    "-ac", "1",
+    "-acodec", "pcm_s16le",
+    "-y",
+    wavPath,
+  ], { timeout: 60_000 });
+
+  onProgress?.(100);
+  return contentType;
+}
+
+async function getVideoInfoFromRailway(url: string) {
+  if (!YTDLP_API_URL) throw new Error("YTDLP_API_URL not configured");
+
+  const res = await fetch(`${YTDLP_API_URL}/info`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...(YTDLP_API_SECRET ? { Authorization: `Bearer ${YTDLP_API_SECRET}` } : {}),
+    },
+    body: JSON.stringify({
+      url,
+      cookies_b64: process.env.YOUTUBE_COOKIES_BASE64 ?? "",
+    }),
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: "Unknown error" }));
+    throw new Error(`Railway info failed: ${err.error || res.statusText}`);
+  }
+
+  return await res.json();
 }
 
 // --- yt-dlp (local dev only) ---
@@ -147,58 +184,6 @@ async function downloadWithYtDlp(
   });
 }
 
-// --- youtubei.js (serverless / fallback) ---
-
-async function downloadWithYoutubei(
-  url: string,
-  wavPath: string,
-  rawAudioPath: string,
-  onProgress?: (percent: number) => void
-): Promise<void> {
-  const yt = await getInnertube();
-  const videoId = extractVideoIdFromUrl(url);
-
-  onProgress?.(5);
-
-  const stream = await yt.download(videoId, { type: "audio", quality: "best" });
-
-  const chunks: Uint8Array[] = [];
-  const reader = stream.getReader();
-  let done = false;
-  while (!done) {
-    const result = await reader.read();
-    done = result.done;
-    if (result.value) chunks.push(result.value);
-  }
-
-  // Save original audio for blob upload
-  await writeFile(rawAudioPath, Buffer.concat(chunks));
-  onProgress?.(80);
-
-  // Convert to WAV for analysis
-  const ffmpeg = getFfmpegPath();
-  if (!ffmpeg) throw new Error("ffmpeg-static not found");
-
-  await execFileAsync(ffmpeg, [
-    "-i", rawAudioPath,
-    "-ar", "22050",
-    "-ac", "1",
-    "-acodec", "pcm_s16le",
-    "-y",
-    wavPath,
-  ], { timeout: 60_000 });
-
-  onProgress?.(100);
-}
-
-function extractVideoIdFromUrl(url: string): string {
-  const match = url.match(
-    /(?:youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/)|youtu\.be\/|music\.youtube\.com\/watch\?v=)([\w-]{11})/
-  );
-  if (!match) throw new Error(`Invalid YouTube URL: ${url}`);
-  return match[1];
-}
-
 // --- Public API ---
 
 export async function extractAudio(
@@ -207,46 +192,46 @@ export async function extractAudio(
 ): Promise<{ wavPath: string; audioPath: string; audioContentType: string; cleanup: () => Promise<void> }> {
   const id = randomUUID();
   const wavPath = join(tmpdir(), `taptap-${id}.wav`);
-  const rawAudioPath = join(tmpdir(), `taptap-${id}.webm`);
+  const rawAudioPath = join(tmpdir(), `taptap-${id}.ogg`);
 
   const hasYtDlp = await isYtDlpAvailable();
 
   if (hasYtDlp) {
+    // Local dev: use yt-dlp directly
     await downloadWithYtDlp(url, wavPath, onProgress);
-    // For yt-dlp, convert WAV to a smaller format for blob upload
-    const ffmpegForOgg = getFfmpegPath();
-    if (ffmpegForOgg) {
+    // Convert WAV to OGG for blob upload
+    const ffmpeg = getFfmpegPath();
+    if (ffmpeg) {
       try {
-        await execFileAsync(ffmpegForOgg, [
+        await execFileAsync(ffmpeg, [
           "-i", wavPath,
           "-ar", "44100",
           "-codec:a", "libvorbis",
           "-b:a", "128k",
           "-y",
-          rawAudioPath.replace(".webm", ".ogg"),
+          rawAudioPath,
         ], { timeout: 60_000 });
       } catch (err) {
         console.error("FFmpeg OGG conversion failed:", err);
       }
     }
-    const oggPath = rawAudioPath.replace(".webm", ".ogg");
     return {
       wavPath,
-      audioPath: oggPath,
+      audioPath: rawAudioPath,
       audioContentType: "audio/ogg",
       cleanup: async () => {
         await unlink(wavPath).catch(() => {});
-        await unlink(oggPath).catch(() => {});
+        await unlink(rawAudioPath).catch(() => {});
       },
     };
   }
 
-  // youtubei.js: keeps the original webm audio
-  await downloadWithYoutubei(url, wavPath, rawAudioPath, onProgress);
+  // Serverless: use Railway yt-dlp service
+  const contentType = await downloadWithRailway(url, wavPath, rawAudioPath, onProgress);
   return {
     wavPath,
     audioPath: rawAudioPath,
-    audioContentType: "audio/webm",
+    audioContentType: contentType,
     cleanup: async () => {
       await unlink(wavPath).catch(() => {});
       await unlink(rawAudioPath).catch(() => {});
@@ -278,17 +263,6 @@ export async function getVideoInfo(url: string) {
     };
   }
 
-  // Fallback: youtubei.js
-  const yt = await getInnertube();
-  const videoId = extractVideoIdFromUrl(url);
-  const info = await yt.getBasicInfo(videoId);
-  const details = info.basic_info;
-  return {
-    title: details.title ?? "Unknown",
-    duration: details.duration ?? 0,
-    videoId: details.id ?? videoId,
-    thumbnailUrl:
-      details.thumbnail?.[details.thumbnail.length - 1]?.url ??
-      `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
-  };
+  // Serverless: use Railway
+  return await getVideoInfoFromRailway(url);
 }
