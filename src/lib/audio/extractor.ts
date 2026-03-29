@@ -62,13 +62,13 @@ let _innertube: Innertube | undefined;
 async function getInnertube(): Promise<Innertube> {
   if (_innertube) return _innertube;
 
-  // Provide a JS evaluator for URL deciphering (required by youtubei.js)
+  // Provide an async JS evaluator for URL deciphering (required since youtubei.js v16+)
   const { Platform } = await import("youtubei.js");
   const vm = await import("vm");
   const shim = Platform.shim;
   Platform.load({
     ...shim,
-    eval: (script, env) => {
+    eval: async (script, env) => {
       const context = { ...env };
       vm.createContext(context);
       vm.runInContext(script.output, context);
@@ -160,7 +160,7 @@ async function downloadWithYoutubei(
 
   onProgress?.(5);
 
-  const stream = await yt.download(videoId, { type: "audio", quality: "best", client: "WEB" });
+  const stream = await yt.download(videoId, { type: "audio", quality: "best" });
 
   const chunks: Uint8Array[] = [];
   const reader = stream.getReader();
@@ -281,7 +281,7 @@ export async function getVideoInfo(url: string) {
   // Fallback: youtubei.js
   const yt = await getInnertube();
   const videoId = extractVideoIdFromUrl(url);
-  const info = await yt.getBasicInfo(videoId, { client: "WEB" });
+  const info = await yt.getBasicInfo(videoId);
   const details = info.basic_info;
   return {
     title: details.title ?? "Unknown",
